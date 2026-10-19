@@ -1,0 +1,36 @@
+
+# macOS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Java / Maven
+target/
+*.class
+*.log
+
+# Node / React
+node_modules/
+dist/
+coverage/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Local data
+data/
+uploads/
+storage/
+*.db
+
+# Temporary files
+*.tmp
+*.swp
