@@ -7,7 +7,7 @@
 | Title | Asynchronous Document Processing and Failure Recovery |
 | Date | 2026-10-26 |
 | Version | 0.1 |
-| Status | PROPOSED |
+| Status | ACCEPTED |
 | Phase | Phase 1 — Basic Design |
 | Related Review | REV-002, REV-006 |
 | Related Documents | architecture.md, data-flow.md, database-design.md, package-design.md, api-design.md |
@@ -405,20 +405,43 @@ React는 기존 REST Polling 방식을 유지한다.
 
 ## 17. Decision Status
 
-Status: PROPOSED
+Status: **ACCEPTED**
 
-제안 결정:
+Decision Date: 2026-10-26
 
-**PostgreSQL 기반 문서 상태 관리 + 단일 Spring Boot Worker + 트랜잭션 기반 Chunk 저장**
+Accepted Decision:
 
-본 ADR은 Phase 1 설계 리뷰에서 확정 여부를 판단한다.
+**Option B — PostgreSQL State-Based Asynchronous Worker**
 
-최종 결정 후 다음 문서에 반영한다.
+승인 범위:
 
-- architecture.md
-- data-flow.md
-- database-design.md
-- package-design.md
-- design-review.md
+1. 문서 업로드와 문서 분석 처리를 분리한다.
+2. PostgreSQL의 Document 상태를 작업 복구의 기준으로 사용한다.
+3. Spring Boot 내부 Worker를 사용한다.
+4. 초기 동시 문서 처리 수는 1개로 제한한다.
+5. MVP에서는 외부 메시지 브로커를 도입하지 않는다.
+6. Embedding 실행 중 장시간 DB 트랜잭션을 유지하지 않는다.
+7. Chunk 저장과 COMPLETED 상태 변경의 원자성을 보장하도록 설계한다.
+8. 중복 처리와 서버 재시작 복구를 지원한다.
 
-기술 검증 및 구현 테스트는 Phase 2 이후에 수행한다.
+Implementation Preconditions:
+
+- 작업 획득은 DB에서 원자적으로 수행해야 한다.
+- 동일 작업의 중복 완료를 방지하는 소유권 검증이 필요하다.
+- 처리 중단 후 복구 대상을 안전하게 식별해야 한다.
+- 재처리 시 Chunk 중복 데이터가 누적되지 않아야 한다.
+- 실패와 재시도 횟수를 제한하고 오류 원인을 기록해야 한다.
+- 파일 저장과 DB 등록 사이의 정합성을 관리해야 한다.
+
+Deferred to Detailed Design:
+
+- Processing Token 자료형 및 생성 방식
+- Retry Count 및 실패 분류 정책
+- Worker Polling 간격
+- 작업 소유권 검증 SQL
+- DB Transaction 경계의 실제 구현
+- 서버 재시작 및 비정상 종료 테스트
+
+본 ADR의 승인은 아키텍처 정책에 대한 승인이다.
+
+실제 장애 복구가 정상적으로 구현되거나 테스트를 통과했다는 의미는 아니다.

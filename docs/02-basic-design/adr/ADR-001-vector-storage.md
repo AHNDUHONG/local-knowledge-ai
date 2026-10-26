@@ -6,7 +6,7 @@
 | ADR ID | ADR-001 |
 | Title | Vector Storage Integration Strategy |
 | Date | 2026-10-26 |
-| Status | PROPOSED |
+| Status | ACCEPTED |
 | Phase | Phase 1 — Basic Design |
 | Related Review | REV-001 |
 | Related Documents | database-design.md, architecture.md, package-design.md |
@@ -192,10 +192,32 @@ Phase 2 및 초기 MVP 구현에서 다음을 검증한다.
 
 ## 9. Decision Status
 
-Status: PROPOSED
+Status: **ACCEPTED**
 
-현재는 설계 검토에 따른 권고안이다.
+Decision Date: 2026-10-26
 
-기존 설계와의 정합성 검토 후 ACCEPTED로 전환한다.
+Accepted Decision:
 
-기술적인 호환성과 실제 성능은 Phase 2 이후에 검증하며, 검증 결과가 가정과 다를 경우 ADR을 재검토한다.
+**Option B — Spring AI + Custom pgvector SQL**
+
+승인 범위:
+
+1. Spring AI는 Ollama 기반 LLM 및 Embedding 호출에 사용한다.
+2. 벡터 저장 및 검색은 자체 pgvector SQL Adapter를 사용한다.
+3. 기존 document 및 document_chunk 데이터 모델을 유지한다.
+4. Flyway를 사용하여 DB 스키마 변경을 관리한다.
+5. 초기에는 Exact Vector Search를 우선 검증한다.
+6. 처리 완료된 문서만 검색 대상으로 한다.
+
+Phase 2 이후 검증 대상:
+
+- Embedding 모델 출력 차원
+- pgvector JDBC 매핑
+- Spring AI 및 Ollama 버전 호환성
+- 검색 정확도와 응답 속도
+- M1 8GB 메모리 사용량
+- 필요 시 벡터 인덱스 최적화
+
+위 항목의 검증이 완료되었다는 의미는 아니다.
+
+검증 결과가 기존 가정과 충돌하면 ADR을 재검토하고 변경 이력을 기록한다.

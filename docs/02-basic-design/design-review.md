@@ -28,8 +28,8 @@
 
 | ID | 검토 항목 | 우선순위 | 상태 |
 |---|---|---|---|
-| REV-001 | Spring AI와 자체 Vector DB 구조의 통합 | High | OPEN |
-| REV-002 | 비동기 문서 처리 및 서버 재시작 복구 | High | OPEN |
+| REV-001 | Spring AI와 자체 Vector DB 구조의 통합 | High | DECIDED |
+| REV-002 | 비동기 문서 처리 및 서버 재시작 복구 | High | DECIDED |
 | REV-003 | Document / RAG Chunking 책임 중복 | Medium | RESOLVED |
 | REV-004 | Embedding 모델과 벡터 차원 | High | 검증 대기 |
 | REV-005 | Citation 검증 수준 | High | OPEN |
