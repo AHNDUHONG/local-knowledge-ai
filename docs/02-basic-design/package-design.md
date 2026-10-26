@@ -307,7 +307,9 @@ QaResponse
 - Document별 Chunk 조회
 - 재처리 시 Chunk 정리
 
-벡터 검색의 실제 구현은 Spring AI VectorStore와 자체 SQL 방식 중 기술 검증 후 선택한다.
+벡터 저장 및 검색은 ADR-001에 따라 자체 PostgreSQL + pgvector SQL Adapter를 사용한다.
+
+Spring AI는 Ollama LLM 및 Embedding 호출에 사용하며, Spring AI PgVectorStore는 MVP의 기본 저장 구현으로 사용하지 않는다.
 
 ### 5.5 Evidence Check
 
@@ -669,7 +671,29 @@ UI 상태 전이와 API 오류 처리를 중심으로 검증한다.
 - [ ] 테스트 가능한 구조인가?
 - [ ] 기존 API와 DB 설계에 충돌하지 않는가?
 
-## 16. 설계 상태 및 다음 단계
+## 16. ADR Alignment — Module Implementation Policy
+
+본 설계는 ADR-001, ADR-002, ADR-003을 따른다.
+
+- `OllamaEmbeddingAdapter`: Spring AI를 통한 Embedding 모델 호출
+- `PgVectorSearchAdapter`: 자체 pgvector SQL 기반 벡터 검색
+- `DocumentChunkRepository`: Chunk 저장·조회·교체 책임
+- `DocumentProcessingWorker`: DB 기반 비동기 작업 실행
+- `DocumentProcessingCoordinator`: 모듈 간 처리 순서 및 복구 조정
+- `RagQuestionService`: 검색, 근거 검증, 답변 생성 조정
+- `AnswerGenerator`: LLM 답변 생성 인터페이스
+
+추가 검토 컴포넌트:
+
+- `EvidenceChecker`
+- `ContextBuilder`
+- `CitationValidator`
+
+각 컴포넌트는 단일 책임을 기준으로 분리하며, 다른 모듈의 내부 Repository에 직접 접근하지 않는다.
+
+클래스의 최종 이름과 상세 인터페이스는 구현 전 상세설계에서 확정한다.
+
+## 17. 설계 상태 및 다음 단계
 
 Version: 0.1
 

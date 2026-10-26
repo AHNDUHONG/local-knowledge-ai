@@ -412,18 +412,46 @@ P0에서는 답변과 출처를 API 응답으로 반환하며, 채팅 기록의 
 
 ## 9. 설계 결정 및 검토 상태
 
-| ID | 설계 내용 | 상태 |
-|---|---|---|
-| ARCH-001 | Modular Monolith 사용 | 제안 |
-| ARCH-002 | React와 Spring Boot 간 REST API 통신 | 제안 |
-| ARCH-003 | Document / RAG / AI 모듈 분리 | 제안 |
-| ARCH-004 | 비동기 문서 처리 | 제안 |
-| ARCH-005 | 서버 측 근거 충분성 판단 | 기존 정책 반영 |
-| ARCH-006 | 로컬 Ollama 기반 LLM 실행 | 방향 확정 |
-| ARCH-007 | Qwen3 4B LLM 사용 | 테스트 대기 |
-| ARCH-008 | Qwen3 Embedding 0.6B | 검토 중 |
-| ARCH-009 | PostgreSQL + pgvector | 기술 검증 대기 |
-| ARCH-010 | 로컬 파일 저장 | 상세 정책 검토 중 |
+| ID | Decision | Status | Reference |
+|---|---|---|---|
+| ARCH-001 | Modular Monolith | 설계 방향 유지 | architecture.md |
+| ARCH-002 | React ↔ Spring Boot REST API | 설계 방향 유지 | api-design.md |
+| ARCH-003 | Document / RAG / AI / Workflow 책임 분리 | RESOLVED | REV-003 |
+| ARCH-004 | PostgreSQL 상태 기반 비동기 Worker | ACCEPTED | ADR-002 |
+| ARCH-005 | Server-Side Evidence Check | ACCEPTED | ADR-003 |
+| ARCH-006 | Local Ollama Runtime | 기존 확정 정책 | PROJECT_STATUS.md |
+| ARCH-007 | Qwen3 4B | 검증 대기 | REV-004 |
+| ARCH-008 | Qwen3 Embedding 0.6B | 검증 대기 | REV-004 |
+| ARCH-009 | Custom pgvector SQL Adapter | ACCEPTED | ADR-001 |
+| ARCH-010 | Local File Storage | 상세 정책 검토 | database-design.md |
+
+### 9.1 Vector Storage
+
+ADR-001에 따라 Spring AI는 LLM과 Embedding 호출을 담당한다.
+
+벡터 저장 및 검색은 프로젝트 전용 PostgreSQL + pgvector SQL Adapter를 사용한다.
+
+### 9.2 Async Processing
+
+ADR-002에 따라 PostgreSQL 상태 기반 Worker를 사용한다.
+
+초기 동시 처리 수는 1개이며, 서버 재시작 복구와 멱등성을 고려한다.
+
+### 9.3 RAG Reliability
+
+ADR-003에 따라 서버 측 Evidence Check와 Citation Integrity Validation을 수행한다.
+
+근거가 부족하면 LLM을 호출하지 않고 ABSTAINED를 반환한다.
+
+시스템 장애는 FAILED로 구분한다.
+
+답변의 의미적 정확성은 별도 평가 데이터로 검증한다.
+
+### 9.4 설계 승인 상태
+
+ADR-001, ADR-002, ADR-003은 ACCEPTED 상태다.
+
+그러나 본 아키텍처 기본설계서 전체는 아직 DRAFT 상태이며, 기본설계 종합 리뷰 후 승인한다.
 
 ## 10. 미결정 사항 (Open Issues)
 

@@ -41,7 +41,20 @@
 
 MVP에서는 별도의 Vector Database 서버를 도입하지 않는다.
 
-Spring AI가 관리하는 기본 VectorStore 테이블을 사용할지, 프로젝트 전용 Chunk 테이블을 직접 연동할지는 기술 검증이 필요하다.
+### Vector Storage Integration Decision
+
+Decision: ADR-001 ACCEPTED
+
+벡터 저장 및 검색은 자체 PostgreSQL + pgvector SQL Adapter를 사용한다.
+
+- Spring AI는 Ollama LLM 및 Embedding 호출을 담당한다.
+- Document 메타데이터 관리는 Spring Data JPA를 우선 사용한다.
+- DocumentChunk 벡터 저장 및 검색은 JDBC 기반 SQL Adapter를 사용한다.
+- 프로젝트 전용 `document` 및 `document_chunk` 테이블을 유지한다.
+- Flyway로 스키마 변경을 관리한다.
+- Spring AI PgVectorStore는 MVP의 기본 벡터 저장 구현으로 사용하지 않는다.
+
+Embedding 차원, JDBC 타입 매핑, 인덱스 및 검색 성능은 Phase 2에서 검증한다.
 
 초기 설계는 프로젝트 전용 데이터 모델을 기준으로 한다.
 
@@ -332,19 +345,22 @@ Document 메타데이터 관리는 Spring Data JPA 사용을 우선 검토한다
 
 ### 12.2 벡터 접근
 
-문서 Chunk와 Embedding의 저장 및 검색은 Spring AI PgVectorStore 또는 별도 SQL 기반 접근 방식 중 선택한다.
+ADR-001에 따라 자체 pgvector SQL Adapter를 사용한다.
 
-선정 기준:
+- Chunk와 Embedding 저장: JDBC 기반 SQL 접근
+- Vector Similarity Search: pgvector SQL
+- 검색 대상: COMPLETED 상태의 Document
+- 초기 검색 방식: Exact Search 우선 검증
+- 거리 계산: Cosine Distance 우선 검토
+- 검색 결과: Document ID, Chunk ID, Content, Source Location, Distance/Score
 
-- 자체 DOCUMENT / DOCUMENT_CHUNK 테이블과의 호환성
-- 출처 메타데이터 관리
-- 완료 상태 기준 검색
-- Flyway 스키마 관리와의 충돌 여부
-- 테스트 및 유지보수 용이성
+Spring AI는 모델 호출에 사용하며 DB VectorStore 기능은 기본 저장 구현으로 사용하지 않는다.
 
-Spring AI의 기본 스키마 자동 생성 여부는 Flyway 관리 정책과 함께 결정한다.
+Embedding Model은 `qwen3-embedding:0.6b`를 우선 검증한다.
 
-현재 단계에서는 Spring AI VectorStore의 실제 내부 테이블 구조를 검증 없이 가정하지 않는다.
+벡터 차원은 1024를 검증 후보로 삼으며, Ollama에서 실제 출력 차원을 확인한 후 확정한다.
+
+해당 결정은 ADR-001을 기준으로 관리한다.
 
 ## 13. Flyway Migration 정책
 

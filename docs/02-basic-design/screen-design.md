@@ -375,7 +375,63 @@ MVP의 우선 지원 환경은 Mac의 데스크톱 브라우저로 제안한다.
 9. 상세한 반응형 화면 기준
 10. API 오류 코드별 UI 문구
 
-## 12. 설계 상태
+## 12. ADR Alignment — UI Reliability Policy
+
+본 화면 설계는 ADR-002와 ADR-003을 따른다.
+
+### 12.1 Document Processing Status
+
+문서 상태에 따른 화면 표시:
+
+| Status | UI Display |
+|---|---|
+| UPLOADED | 처리 대기 중 |
+| PROCESSING | 문서 분석 중 |
+| COMPLETED | 문서 처리 완료 |
+| FAILED | 문서 처리 실패 |
+
+업로드 성공과 문서 분석 완료를 구별한다.
+
+React는 REST Polling으로 문서 상태를 조회한다.
+
+### 12.2 Chat Response Status
+
+질문 처리 결과에 따른 화면 표시:
+
+| Status | UI Display |
+|---|---|
+| ANSWERED | AI 답변 및 출처 표시 |
+| ABSTAINED | 문서에서 충분한 근거를 찾지 못했다는 안내 |
+| ERROR | 서버 또는 AI 모델 처리 오류 안내 |
+
+ABSTAINED는 서버 장애가 아니라 정상적인 답변 보류 결과다.
+
+ERROR는 프론트엔드에서 사용하는 오류 화면 상태이며, 서버의 HTTP 오류 응답에 대응한다.
+
+### 12.3 Citation Display
+
+출처는 서버에서 검증한 데이터만 표시한다.
+
+표시 항목:
+
+- 원본 문서명
+- PDF 페이지 번호(존재하는 경우)
+- 근거 텍스트 일부
+
+서버가 제공하지 않은 출처를 프론트엔드에서 임의로 생성하지 않는다.
+
+Citation Integrity와 답변 내용의 의미적 정확성을 동일하게 취급하지 않는다.
+
+### 12.4 UI Error Handling
+
+- 문서 처리 FAILED: 문서 분석 실패 안내
+- 근거 부족 ABSTAINED: 답변 보류 안내
+- LLM 연결 실패: 서버 오류 안내
+- 네트워크 오류: 통신 실패 안내
+
+사용자에게 내부 Stack Trace나 민감한 로컬 파일 경로를 노출하지 않는다.
+
+## 13. 설계 상태
 
 현재 버전: 0.1
 

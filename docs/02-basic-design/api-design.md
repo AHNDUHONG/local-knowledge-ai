@@ -535,7 +535,55 @@ CORS 설정만으로 외부 접근이나 악의적인 요청을 방어할 수 �
 - [ ] P1 기능이 MVP에 포함되지 않았는가?
 - [ ] 로컬 접근 및 파일 입력 보안을 고려했는가?
 
-## 15. 설계 상태 및 다음 단계
+## 15. ADR Alignment — API Contract
+
+본 API 설계는 ADR-002와 ADR-003을 따른다.
+
+### 15.1 Document Upload
+
+Endpoint: `POST /api/v1/documents`
+
+- 202 Accepted는 업로드 접수 성공을 의미한다.
+- 업로드 접수와 문서 분석 완료는 구별한다.
+- 문서 처리 상태는 PostgreSQL에서 관리한다.
+- 작업은 Spring Boot 비동기 Worker가 처리한다.
+
+### 15.2 Document Processing Status
+
+Endpoint: `GET /api/v1/documents/{id}/status`
+
+문서 처리 상태:
+
+- UPLOADED
+- PROCESSING
+- COMPLETED
+- FAILED
+
+프론트엔드는 기존 REST Polling 방식을 사용한다.
+
+서버 재시작 이후에도 DB에 기록된 상태를 기준으로 조회한다.
+
+### 15.3 RAG Question Answering
+
+Endpoint: `POST /api/v1/qa`
+
+응답 정책:
+
+- ANSWERED: 답변과 실제 검색 결과 기반 출처 반환
+- ABSTAINED: 근거 부족으로 답변 보류
+- System Error: 기존 HTTP 오류 응답 반환
+
+근거가 부족하면 LLM을 호출하지 않는다.
+
+출처는 실제 검색된 DocumentChunk를 기반으로 구성한다.
+
+LLM이 임의로 생성한 출처 ID는 사용하지 않는다.
+
+Similarity Threshold 및 Top-K는 실험 및 평가 결과에 따라 결정한다.
+
+기존 P0 API의 Endpoint, Request 및 Response 계약은 유지한다.
+
+## 16. 설계 상태 및 다음 단계
 
 Version: 0.1
 
