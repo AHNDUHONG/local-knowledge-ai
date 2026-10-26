@@ -30,7 +30,7 @@
 |---|---|---|---|
 | REV-001 | Spring AI와 자체 Vector DB 구조의 통합 | High | OPEN |
 | REV-002 | 비동기 문서 처리 및 서버 재시작 복구 | High | OPEN |
-| REV-003 | Document / RAG Chunking 책임 중복 | Medium | OPEN |
+| REV-003 | Document / RAG Chunking 책임 중복 | Medium | RESOLVED |
 | REV-004 | Embedding 모델과 벡터 차원 | High | 검증 대기 |
 | REV-005 | Citation 검증 수준 | High | OPEN |
 | REV-006 | 파일 저장과 DB 트랜잭션 정합성 | High | OPEN |
@@ -68,6 +68,21 @@
 - RAG: Chunking 및 벡터 인덱싱
 - AI: 답변 생성
 - Workflow: 처리 순서 조정
+
+**Review Resolution — REV-003**
+
+- Document Module은 원본 파일 관리 및 텍스트 추출을 담당한다.
+- RAG Module은 Chunking, Embedding, Vector Storage 및 Retrieval을 담당한다.
+- AI Module은 LLM 답변 생성을 담당한다.
+- Workflow는 문서 비동기 처리와 모듈 간 작업 순서를 조정한다.
+- Document → RAG 직접 의존성은 허용하지 않는다.
+- 모듈 간 접근은 공개 인터페이스를 통해 수행한다.
+
+Decision: 모듈 책임 구분에 대한 수정안 채택
+
+Review Status: RESOLVED
+
+Implementation Verification: PENDING
 
 ### REV-004 — Embedding 모델
 

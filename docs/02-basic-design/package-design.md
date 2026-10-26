@@ -391,6 +391,27 @@ LLM 후보는 `qwen3:4b`이다.
 
 실제 작업 스케줄링과 복구 코드는 상세설계에서 확정한다.
 
+### 7.1 Module Responsibility Boundary
+
+모듈별 책임 경계는 다음과 같이 정의한다.
+
+| Module | Responsibility |
+|---|---|
+| Document | 파일 검증, 저장, 텍스트 추출, 문서 메타데이터 및 상태 관리 |
+| RAG | Chunking, Embedding, 벡터 저장, 검색, 근거 충분성 검증 및 출처 구성 |
+| AI | LLM 호출, 프롬프트 관리, 답변 생성 |
+| Workflow | 비동기 처리 순서 조정, 작업 획득, 실패 및 복구 관리 |
+
+문서 처리 과정에서 Workflow는 Document Module의 공개 인터페이스를 통해 추출된 텍스트를 획득하고, RAG Module의 공개 인덱싱 인터페이스를 호출한다.
+
+RAG Module은 검색에 필요한 문서 메타데이터를 Document Module의 공개 읽기 인터페이스로 조회할 수 있다.
+
+Document Module은 RAG Module을 직접 호출하지 않는다.
+
+각 모듈은 다른 모듈의 Controller, Repository 또는 내부 Entity 구현에 직접 의존하지 않는 것을 원칙으로 한다.
+
+이 규칙은 REV-003의 책임 중복을 해결하기 위한 설계 결정이며, 구체적인 Java 인터페이스와 메서드는 상세설계에서 정의한다.
+
 ## 8. Common / Infrastructure
 
 공통 기능 후보:

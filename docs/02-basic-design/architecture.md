@@ -141,40 +141,54 @@ Local Knowledge AI는 사용자가 업로드한 PDF 및 TXT 문서를 기반으�
 주요 책임:
 
 - 업로드 요청 수신
-- 확장자 및 실제 파일 형식 검증
+- 파일 확장자 및 실제 형식 검증
 - 파일 크기 제한
-- 로컬 파일 저장
+- 로컬 원본 파일 저장
 - PDF/TXT 텍스트 추출
-- 문서 Chunking
 - 문서 메타데이터 및 처리 상태 관리
+- RAG Module에 추출된 텍스트와 출처 위치 정보 제공
+
+Document Module은 원본 파일의 생명주기와 메타데이터를 관리한다.
+
+**Chunking 및 Embedding은 RAG Module의 책임으로 분리한다.**
 
 대표적인 처리 단계:
 
-`UPLOAD → VALIDATION → STORAGE → EXTRACTION → CHUNKING`
+`UPLOAD → VALIDATION → STORAGE → TEXT EXTRACTION`
 
-문서 ID와 Chunk ID를 통해 원본 문서와 분할된 텍스트의 관계를 관리한다.
+Document와 DocumentChunk의 관계는 DB에서 1:N으로 관리하되, Document Module이 RAG의 내부 Repository에 직접 의존하지 않는다.
 
 ### 4.3 RAG Module
 
 주요 책임:
 
-- 문서 Chunk 임베딩 요청
-- 질문 임베딩 요청
-- pgvector 기반 유사도 검색
-- 관련 문서 Chunk 조회
-- 검색 결과의 근거 충분성 판단
-- 출처 메타데이터 구성
+- 추출된 텍스트의 Chunking
+- Chunk 출처 위치 정보 관리
+- 문서 Chunk Embedding 생성
+- pgvector 기반 Chunk 저장 및 검색
+- 질문 Embedding 생성
+- 검색 결과의 근거 충분성 검증
+- LLM에 전달할 문서 컨텍스트 구성
+- 검색된 DocumentChunk 기반 출처 검증
 
-처리 방향:
+문서 인덱싱 처리:
+
+`EXTRACTED TEXT → CHUNKING → EMBEDDING → VECTOR STORAGE`
+
+질문 처리:
 
 1. 사용자 질문을 벡터로 변환
-2. 문서 벡터와 유사도 비교
-3. 관련 Chunk 검색
-4. 근거 충분성 평가
-5. 충분한 경우 AI Module에 컨텍스트 전달
-6. 부족한 경우 답변 보류
+2. 처리 완료된 문서에서 관련 Chunk 검색
+3. 검색 결과의 충분성 검증
+4. 근거가 충분하면 AI Module을 통해 답변 생성
+5. 근거가 부족하면 ABSTAINED 반환
+6. 실제 검색된 Chunk를 기준으로 출처 구성
 
-검색 방식, Top-K 및 Similarity Threshold는 성능과 검색 품질 검증 후 결정한다.
+RAG Module은 Document Module의 내부 구현이나 Repository에 직접 의존하지 않는다.
+
+필요한 문서 정보는 공개 읽기 인터페이스를 통해 조회한다.
+
+검색 방식, Top-K, Similarity Threshold는 실제 평가 후 확정한다.
 
 ### 4.4 AI Module
 
