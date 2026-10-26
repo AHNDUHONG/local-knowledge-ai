@@ -7,7 +7,7 @@
 | Title | RAG Evidence and Citation Verification Policy |
 | Date | 2026-10-26 |
 | Version | 0.1 |
-| Status | PROPOSED |
+| Status | ACCEPTED |
 | Phase | Phase 1 — Basic Design |
 | Related Review | REV-005 |
 | Related Requirements | DEC-003, FR-004, FR-005, FR-006, FR-007, NFR-004 |
@@ -404,14 +404,45 @@ ABSTAINED와 FAILED를 혼용하지 않는다.
 
 ## 16. Decision Status
 
-Status: PROPOSED
+Status: **ACCEPTED**
 
-Proposed Decision:
+Decision Date: 2026-10-26
 
-**Server-Side Evidence Check + Citation Integrity Validation**
+Accepted Decision:
 
-본 ADR은 MVP의 RAG 신뢰성 확보를 위한 기본 정책을 제안한다.
+**Option B — Server-Side Evidence Check + Citation Integrity Validation**
 
-실제 관련성 기준, 의미적 검증 수준 및 품질 평가 기준은 후속 검증에서 결정한다.
+### 16.1 승인된 설계 정책
 
-최종 승인 시 관련 설계 문서에 반영한다.
+1. Spring Boot RAG Module에서 Evidence Check를 수행한다.
+2. 처리 상태가 COMPLETED인 문서만 검색한다.
+3. 유효한 검색 결과가 없으면 LLM을 호출하지 않고 ABSTAINED를 반환한다.
+4. 검색된 DocumentChunk의 ID와 출처 메타데이터를 유지한다.
+5. 출처는 서버에서 검증된 검색 데이터만 이용해 구성한다.
+6. LLM이 임의로 생성한 문서명과 출처 ID는 신뢰하지 않는다.
+7. 시스템 오류는 FAILED로 처리하고 근거 부족과 구별한다.
+8. 검색 문서의 내용은 신뢰할 수 없는 데이터로 취급한다.
+
+### 16.2 Phase 2 이후 검증 항목
+
+- Top-K = 5를 초기 실험값으로 사용
+- Similarity Threshold 평가 후 결정
+- 한국어 및 일본어 문서 기반 검색 품질 테스트
+- 실제 Chunk ID와 Citation의 연결 검증
+- 문서에 없는 질문에 대한 답변 보류 테스트
+- 숫자·날짜·상충 정보에 대한 답변 정확도 테스트
+- Prompt Injection 방어 테스트
+
+### 16.3 승인 범위의 한계
+
+Citation Integrity는 출처의 식별자와 데이터가 유효한지 검증하는 것이다.
+
+답변의 모든 사실이 출처에 의해 충분히 뒷받침되는지 확인하는 Faithfulness 검증과는 다르다.
+
+따라서 본 ADR의 승인은 환각이 완전히 제거되었음을 의미하지 않는다.
+
+MVP에서는 서버 측 근거 후보 검증과 출처 무결성을 우선 구현하고, 실제 답변 정확성은 평가 데이터를 이용하여 검증한다.
+
+고급 LLM-as-a-Judge 및 추가 검증 모델은 MVP의 필수 구성요소로 도입하지 않는다.
+
+검증 결과가 설계 가정과 충돌하면 ADR을 재검토한다.

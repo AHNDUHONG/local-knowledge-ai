@@ -31,13 +31,13 @@
 | REV-001 | Spring AI와 자체 Vector DB 구조의 통합 | High | DECIDED |
 | REV-002 | 비동기 문서 처리 및 서버 재시작 복구 | High | DECIDED |
 | REV-003 | Document / RAG Chunking 책임 중복 | Medium | RESOLVED |
-| REV-004 | Embedding 모델과 벡터 차원 | High | 검증 대기 |
-| REV-005 | Citation 검증 수준 | High | OPEN |
+| REV-004 | Embedding 모델과 벡터 차원 | High | VALIDATION PENDING |
+| REV-005 | Citation 검증 수준 | High | DECIDED |
 | REV-006 | 파일 저장과 DB 트랜잭션 정합성 | High | OPEN |
 | REV-007 | API와 화면 상태 일치 | Low | 주요 흐름 일치 |
 | REV-008 | P0/P1 기능 범위 | Low | 주요 범위 일치 |
 | REV-009 | 모듈 간 순환 의존성 방지 | Medium | 상세 인터페이스 검토 |
-| REV-010 | 최대 파일 크기 및 응답 제한 | Medium | 미결정 |
+| REV-010 | 최대 파일 크기 및 응답 제한 | Medium | EXPERIMENT PLANNED |
 
 ## 4. 주요 개선 제안
 
@@ -101,6 +101,74 @@ Implementation Verification: PENDING
 - 임의 출처 생성 금지
 - 근거 부족 시 답변 보류
 - 답변 문장의 의미적 정합성 검증 수준은 별도 검토
+
+## 4.1 REV-004 — Model and Embedding Validation Plan
+
+### 검토 결과
+
+LLM과 Embedding 모델은 서로 다른 역할을 수행한다.
+
+- Generation LLM: `qwen3:4b`
+- Embedding Model: `qwen3-embedding:0.6b`
+
+Qwen3 Embedding 0.6B의 기본 출력은 최대 1024차원을 지원한다.
+
+초기 DB 설계는 `vector(1024)`를 검증 대상으로 삼는다.
+
+단, Ollama 실행 결과와 실제 출력 배열 길이를 확인한 후 최종 확정한다.
+
+### 검증 항목
+
+- [ ] Ollama 설치 및 정상 실행
+- [ ] Qwen3 4B 모델 실행
+- [ ] Qwen3 Embedding 0.6B 모델 실행
+- [ ] Embedding 출력 차원 확인
+- [ ] pgvector 저장 및 검색 테스트
+- [ ] 한국어·일본어 문서 검색 품질 확인
+- [ ] Spring Boot 및 DB 동시 실행 시 메모리 측정
+- [ ] LLM과 Embedding 모델의 메모리 점유 확인
+
+Status: VALIDATION PENDING
+
+## 4.2 REV-005 — RAG Reliability Decision
+
+Decision: ADR-003 ACCEPTED
+
+승인된 설계:
+
+- Server-Side Evidence Check
+- Citation Integrity Validation
+- COMPLETED 문서만 검색
+- 근거 부족 시 ABSTAINED
+- 시스템 장애 시 FAILED
+- 검색 결과 기반 출처 구성
+
+Similarity Threshold 및 답변 Faithfulness의 정량적 기준은 실제 평가 이후 확정한다.
+
+Status: DECIDED
+
+## 4.3 REV-010 — Initial Resource Limits
+
+M1 8GB 환경의 초기 실험 설정을 다음과 같이 제안한다.
+
+| Parameter | Initial Value | Status |
+|---|---|---|
+| Maximum File Size | 10 MB | EXPERIMENT |
+| Maximum Question Length | 2000 characters | EXPERIMENT |
+| Concurrent Document Workers | 1 | ADR-002 Policy |
+| Concurrent LLM Generations | 1 | EXPERIMENT |
+| Retrieval Top-K | 5 | EXPERIMENT |
+| Embedding Dimensions | 1024 | VALIDATION PENDING |
+| Status Polling Interval | 2 seconds | EXPERIMENT |
+| LLM Request Timeout | 120 seconds | EXPERIMENT |
+
+위 값은 최종 확정된 비기능 요구사항이 아니다.
+
+개발 환경 및 로컬 성능을 측정한 뒤 변경할 수 있도록 외부 설정으로 관리한다.
+
+특히 파일 크기와 처리 메모리 사용량은 동일하지 않으므로, PDF 파싱 및 Embedding 처리 중의 실제 메모리 소비를 확인해야 한다.
+
+Status: EXPERIMENT PLANNED
 
 ## 5. 승인 조건
 
