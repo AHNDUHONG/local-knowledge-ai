@@ -5,11 +5,11 @@
 | 항목 | 내용 |
 |---|---|
 | Project | Local Knowledge AI |
-| Document Version | 1.0 |
-| Last Updated | 2026-10-19 |
-| Current Phase | Phase 0 완료 정리 / Phase 1 진입 준비 |
-| Next Phase | Basic Design（基本設計） |
-| Development Status | Planning / Not Implemented |
+| Document Version | 1.1 |
+| Last Updated | 2026-11-11 |
+| Current Phase | Phase 1 — Basic Design Final Review |
+| Next Phase | Phase 2 — Development Environment Setup / Detailed Design Preparation |
+| Development Status | Basic Design Draft Complete / Implementation Not Started |
 | Repository | https://github.com/AHNDUHONG/local-knowledge-ai |
 | Local Path | `~/Project/local-knowledge-ai` |
 
@@ -508,44 +508,67 @@ Spring Boot, Spring AI 및 Java의 호환성 검증이 필요하다.
 
 ## 13. 다음 작업 (Next Tasks)
 
-### Phase 0 — 마무리
+### Phase 0 — Requirements
 
-1. GitHub 원격 저장소의 최신 커밋과 파일 확인
-2. `requirements.md`, `PROJECT_STATUS.md`, `README.md` 검토
-3. `.gitignore` 검토
-4. 요구사항 초안 승인 및 미결정 조건 정리
+- 요구사항 문서 초안 작성 완료
+- GitHub 연결 완료
+- 요구사항 최종 승인 여부는 별도 확인 필요
 
-### Phase 1 — 기본설계（基本設計）
+### Phase 1 — Basic Design
 
-진행 순서:
+기본설계서 6개 작성 완료:
 
-1. 시스템 아키텍처 설계
-2. 문서 처리 및 RAG 데이터 흐름 설계
-3. 화면 구조 및 사용자 동선 설계
-4. 데이터베이스 ERD 설계
-5. REST API 설계
-6. 프로젝트 패키지 구조 설계
-7. 주요 설계 결정 ADR 작성
+1. architecture.md
+2. data-flow.md
+3. screen-design.md
+4. database-design.md
+5. api-design.md
+6. package-design.md
 
-### Phase 2 — 개발 환경 구축
+주요 아키텍처 결정:
 
-- JDK 및 Maven
-- Spring Boot
-- Node.js / React / Vite
-- PostgreSQL / pgvector
-- Ollama 및 생성 모델
-- Embedding 모델
-- IDE 확장 및 디버깅 구성
+- ADR-001: ACCEPTED
+- ADR-002: ACCEPTED
+- ADR-003: ACCEPTED
 
-### Phase 3 — MVP 구현
+설계 리뷰:
+
+- REV-001 / 002 / 005: DECIDED
+- REV-003: RESOLVED
+- REV-006: DESIGN RESOLVED
+- REV-004 / 007 / 008 / 009 / 010: 검증 또는 추가 확인 필요
+
+Current Status: FINAL CLEANUP REQUIRED
+
+### Immediate Next Tasks
+
+1. final-review.md의 승인 조건 확인
+2. 기본설계서의 오래된 설명 수정
+3. API / UI / DB 정합성 최종 확인
+4. 요구사항 승인 상태 확인
+5. 기본설계 v1.0 승인 여부 결정
+
+### Phase 2 — Development Environment and Detailed Design
+
+Phase 1 승인 이후 다음 작업을 수행한다.
+
+- Java 21 / Maven / Spring Boot 환경 검증
+- Spring AI 버전 호환성 검증
+- React / TypeScript / Vite 환경 구축
+- PostgreSQL / pgvector 환경 구축
+- Ollama 설치 및 모델 실행 검증
+- Qwen3 4B 및 Embedding 0.6B 테스트
+- DB 상세설계 및 Flyway Migration
+- Backend DTO / Entity / Service 상세설계
+- API 구현 계획 및 테스트 설계
+
+### Phase 3 — MVP Implementation
 
 작은 기능 단위로 구현하고 매 단계 테스트한다.
 
-### Phase 4 — 품질 개선 및 확장
+### Phase 4 — Quality Improvement
 
-검색 품질, 검증, Harness, 성능, 운영 기능을 개선한다.
-
----
+검색 품질, RAG 신뢰성, 성능 및 추가 기능을 개선한다.
 
 ## 14. ChatGPT 협업 규칙
 
@@ -566,16 +589,34 @@ Spring Boot, Spring AI 및 Java의 호환성 검증이 필요하다.
 
 ## 15. 다음 채팅 시작 위치
 
-**Current Phase:** Phase 0 최종 확인 → Phase 1 Basic Design
+**Current Phase:** Phase 1 — Basic Design Final Review
 
-**Next Main Task:** 시스템 아키텍처 기본설계
+**Current Status:** FINAL CLEANUP REQUIRED
+
+**Completed:**
+
+- 기본설계 문서 6개 초안 작성 및 GitHub 저장
+- ADR-001 ACCEPTED
+- ADR-002 ACCEPTED
+- ADR-003 ACCEPTED
+- REV-003 및 REV-006 설계 수준 해결
+- 주요 ADR의 기본설계 반영
+
+**Next Main Task:** Phase 1 최종 문서 정리 및 승인 여부 결정
 
 **Expected Output:**
-- 아키텍처 구성도
-- 컴포넌트별 역할
-- 문서 처리 흐름
-- 질문/검색/응답 흐름
-- 동기/비동기 처리 방침
-- 아키텍처 설계 결정 및 근거
 
-**Important:** 아직 DB ERD나 API 세부 설계가 확정되지 않았으므로 이를 완료된 설계로 취급하지 않는다.
+- 오래된 설계 설명 수정
+- API / DB / UI 간 정합성 최종 확인
+- 미결정 항목과 기술 검증 대기 항목 분리
+- 요구사항 승인 상태 기록
+- 기본설계 승인 결과 및 버전 갱신
+- Phase 2 실행 계획
+
+**Important:**
+
+Spring Boot, React, PostgreSQL, pgvector, Ollama의 실제 구현 및 통합 테스트는 아직 완료되지 않았다.
+
+Qwen3 4B와 Qwen3 Embedding 0.6B는 우선 검증 모델이며 실제 하드웨어 테스트 결과에 따라 조정할 수 있다.
+
+현재 기본설계 문서 전체를 APPROVED로 간주하지 않는다.
