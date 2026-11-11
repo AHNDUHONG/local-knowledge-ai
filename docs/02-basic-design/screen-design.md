@@ -4,10 +4,10 @@
 |---|---|
 | Project | Local Knowledge AI |
 | Document | 화면 기본설계서 (画面基本設計書) |
-| Version | 0.1 |
+| Version | 1.0 |
 | Date | 2026-10-20 |
 | Phase | Phase 1 — Basic Design |
-| Status | DRAFT |
+| Status | APPROVED |
 | Related Documents | `architecture.md`, `data-flow.md` |
 | Requirements | FR-001, FR-006, FR-007, FR-008, FR-009 |
 
@@ -468,9 +468,9 @@ Citation Integrity와 답변 내용의 의미적 정확성을 동일하게 취�
 
 ## 13. 설계 상태
 
-Version: 0.1
+Version: 1.0
 
-Status: DRAFT — FINAL REVIEW
+Status: APPROVED
 
 ### 13.1 설계 완료 항목
 
@@ -502,4 +502,4 @@ ADR-003에 따라 다음 응답을 구별한다.
 
 다음 단계는 화면 기본설계서 신규 작성이 아니라 최종 승인 및 React 구현 준비다.
 
-본 문서는 최종 승인 전까지 DRAFT 상태를 유지한다.
+본 문서는 기본설계 v1.0으로 승인되었다. 실제 구현과 기술 검증은 별도로 진행한다.

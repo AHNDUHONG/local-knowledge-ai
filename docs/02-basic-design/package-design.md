@@ -4,10 +4,10 @@
 |---|---|
 | Project | Local Knowledge AI |
 | Document | 패키지 구조 기본설계서（パッケージ構成設計書） |
-| Version | 0.1 |
+| Version | 1.0 |
 | Date | 2026-10-26 |
 | Phase | Phase 1 — Basic Design |
-| Status | DRAFT |
+| Status | APPROVED |
 | Related Documents | `architecture.md`, `data-flow.md`, `screen-design.md`, `database-design.md`, `api-design.md` |
 
 ---
@@ -695,9 +695,9 @@ UI 상태 전이와 API 오류 처리를 중심으로 검증한다.
 
 ## 17. 설계 상태 및 다음 단계
 
-Version: 0.1
+Version: 1.0
 
-Status: DRAFT — FINAL REVIEW
+Status: APPROVED
 
 ### 17.1 설계 완료 항목
 
@@ -727,4 +727,4 @@ Status: DRAFT — FINAL REVIEW
 4. 주요 컴포넌트 상세설계
 5. 작은 기능 단위 구현 및 테스트
 
-본 문서는 최종 승인 전까지 DRAFT 상태를 유지한다.
+본 문서는 기본설계 v1.0으로 승인되었다. 실제 구현과 기술 검증은 별도로 진행한다.

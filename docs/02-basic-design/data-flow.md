@@ -4,10 +4,10 @@
 |---|---|
 | 프로젝트 | Local Knowledge AI |
 | 문서 | 데이터 흐름 기본설계서（データフロー設計書） |
-| 버전 | 0.1 |
+| 버전 | 1.0 |
 | 작성일 | 2026-10-20 |
 | 개발 단계 | Phase 1 — Basic Design |
-| 문서 상태 | DRAFT |
+| 문서 상태 | APPROVED |
 | 상위 설계서 | `docs/02-basic-design/architecture.md` |
 | 기준 요구사항 | FR-001 ~ FR-009 |
 
@@ -475,9 +475,9 @@ LLM과 Embedding 모델의 동시 메모리 점유를 측정하고, 전체 시�
 
 ## 12. 설계 검토 결과
 
-Version: 0.1
+Version: 1.0
 
-Status: DRAFT — FINAL REVIEW
+Status: APPROVED
 
 ### 12.1 확정된 설계 방향
 

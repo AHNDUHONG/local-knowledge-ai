@@ -4,10 +4,10 @@
 |---|---|
 | Project | Local Knowledge AI |
 | Document | REST API 기본설계서（API基本設計書） |
-| Version | 0.1 |
+| Version | 1.0 |
 | Date | 2026-10-20 |
 | Phase | Phase 1 — Basic Design |
-| Status | DRAFT |
+| Status | APPROVED |
 | Related Documents | `architecture.md`, `data-flow.md`, `screen-design.md`, `database-design.md` |
 | Requirements | FR-001 ~ FR-009, NFR-001 ~ NFR-008 |
 
@@ -585,9 +585,9 @@ Similarity Threshold 및 Top-K는 실험 및 평가 결과에 따라 결정한�
 
 ## 16. 설계 상태 및 다음 단계
 
-Version: 0.1
+Version: 1.0
 
-Status: DRAFT — FINAL REVIEW
+Status: APPROVED
 
 ### 16.1 MVP API 계약
 
@@ -617,4 +617,4 @@ Status: DRAFT — FINAL REVIEW
 
 기본설계에서 정의한 P0 API 계약은 유지한다.
 
-본 문서는 최종 승인 전까지 DRAFT 상태를 유지한다.
+본 문서는 기본설계 v1.0으로 승인되었다. 실제 구현과 기술 검증은 별도로 진행한다.

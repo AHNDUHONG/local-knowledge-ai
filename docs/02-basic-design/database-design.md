@@ -4,10 +4,10 @@
 |---|---|
 | Project | Local Knowledge AI |
 | Document | 데이터베이스 기본설계서 (データベース基本設計書) |
-| Version | 0.1 |
+| Version | 1.0 |
 | Date | 2026-10-20 |
 | Phase | Phase 1 — Basic Design |
-| Status | DRAFT |
+| Status | APPROVED |
 | Related Documents | `architecture.md`, `data-flow.md`, `screen-design.md` |
 | Requirements | FR-001 ~ FR-009, NFR-002, NFR-005, NFR-006 |
 
@@ -446,9 +446,9 @@ Flyway로 DB 스키마 변경 이력을 관리하는 방향을 유지한다.
 
 ## 16. 설계 상태 및 다음 단계
 
-Version: 0.1
+Version: 1.0
 
-Status: DRAFT — FINAL REVIEW
+Status: APPROVED
 
 ### 16.1 확정된 설계 정책
 
@@ -479,4 +479,4 @@ Status: DRAFT — FINAL REVIEW
 3. pgvector 저장 및 검색 테스트
 4. Flyway Migration 검증
 
-본 문서는 기본설계 최종 승인 전까지 DRAFT 상태를 유지한다.
+본 문서는 기본설계 v1.0으로 승인되었다. 실제 구현과 기술 검증은 별도로 진행한다.
