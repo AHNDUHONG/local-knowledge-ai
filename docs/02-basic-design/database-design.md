@@ -448,16 +448,35 @@ Flyway로 DB 스키마 변경 이력을 관리하는 방향을 유지한다.
 
 Version: 0.1
 
-Status: DRAFT
+Status: DRAFT — FINAL REVIEW
 
-본 문서는 DB 기본설계 초안이며, 상세 자료형과 인덱스, 벡터 저장 통합 방식은 검토 중이다.
+### 16.1 확정된 설계 정책
 
-다음 단계:
+- PostgreSQL + pgvector를 사용한다.
+- ADR-001에 따라 자체 pgvector SQL Adapter를 사용한다.
+- Spring AI는 Ollama LLM 및 Embedding 모델 호출에 사용한다.
+- Document와 DocumentChunk의 관계는 1:N이다.
+- COMPLETED 상태의 문서만 검색한다.
+- Flyway를 사용해 DB 스키마 변경을 관리한다.
+- ADR-002에 따라 Chunk 저장 및 완료 상태 변경의 원자성을 확보한다.
+- REV-006에 따라 파일 시스템과 DB 사이의 보상 및 복구 정책을 적용한다.
 
-1. REST API 기본설계
-2. Backend / Frontend 구조 설계
-3. 각 기본설계 문서 간 정합성 검토
-4. 아키텍처 결정 ADR 정리
-5. 기본설계 최종 승인
+### 16.2 상세설계 및 기술 검증 대기
 
-실제 SQL 및 JPA Entity 작성은 본 설계가 구체화된 후 진행한다.
+- Embedding 벡터 차원 확정
+- UUID 생성 방식
+- 처리 작업 소유권 및 복구 컬럼
+- Chunk 위치 정보 구조
+- 벡터 인덱스 최적화
+- 실제 Flyway DDL
+- pgvector JDBC 매핑
+- 원본 파일 저장 경로 및 정리 정책
+
+### 16.3 다음 단계
+
+1. 기본설계 최종 승인 조건 확인
+2. 상세 DB 설계 및 DDL 작성
+3. pgvector 저장 및 검색 테스트
+4. Flyway Migration 검증
+
+본 문서는 기본설계 최종 승인 전까지 DRAFT 상태를 유지한다.

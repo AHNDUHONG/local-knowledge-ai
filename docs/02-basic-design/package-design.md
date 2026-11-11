@@ -697,16 +697,34 @@ UI 상태 전이와 API 오류 처리를 중심으로 검증한다.
 
 Version: 0.1
 
-Status: DRAFT
+Status: DRAFT — FINAL REVIEW
 
-본 문서는 패키지 구조 기본설계 초안이다.
+### 17.1 설계 완료 항목
 
-다음 단계:
+- Modular Monolith 기반 Backend 구조
+- Document / RAG / AI / Workflow 모듈 책임 분리
+- Controller / Application / Repository 계층 구분
+- DTO와 Entity 분리 정책
+- React 기능별 폴더 구조
+- 기본 테스트 패키지 구조
+- ADR-001~003 설계 정책 반영
 
-1. 6개 기본설계 문서의 일관성 검토
-2. 미결정 사항 및 설계 충돌 정리
-3. 주요 설계 결정 ADR 작성
-4. 기본설계 최종 승인
-5. Phase 2 개발 환경 구축
+### 17.2 상세설계 대기
 
-기본설계가 승인되기 전까지 실제 Java/React 프로젝트 코드는 생성하지 않는다.
+- Java 기본 패키지명 최종 확정
+- 모듈 공개 인터페이스
+- 클래스별 메서드 및 DTO 정의
+- 비동기 Worker 구현
+- PostgreSQL / pgvector Adapter 구현
+- EvidenceChecker / CitationValidator 인터페이스
+- Spring Bean 구성 및 의존성 검증
+
+### 17.3 다음 단계
+
+1. Phase 1 기본설계 최종 승인
+2. Phase 2 개발환경 구축
+3. Backend 및 Frontend 프로젝트 생성
+4. 주요 컴포넌트 상세설계
+5. 작은 기능 단위 구현 및 테스트
+
+본 문서는 최종 승인 전까지 DRAFT 상태를 유지한다.

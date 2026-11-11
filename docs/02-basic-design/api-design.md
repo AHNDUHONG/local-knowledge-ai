@@ -587,14 +587,34 @@ Similarity Threshold 및 Top-K는 실험 및 평가 결과에 따라 결정한�
 
 Version: 0.1
 
-Status: DRAFT
+Status: DRAFT — FINAL REVIEW
 
-다음 작업:
+### 16.1 MVP API 계약
 
-1. Spring Boot 및 React 프로젝트 구조 설계
-2. 기본설계 문서 간 정합성 검토
-3. 설계 결정에 대한 ADR 작성
-4. 기본설계 최종 승인
-5. 개발환경 구축 단계 진입
+| Method | Endpoint | Responsibility |
+|---|---|---|
+| POST | /api/v1/documents | PDF/TXT 업로드 |
+| GET | /api/v1/documents/{id}/status | 문서 상태 조회 |
+| POST | /api/v1/qa | RAG 질문 및 답변 |
 
-본 문서는 상세설계 및 구현 과정에서 인터페이스 계약의 기준으로 사용한다.
+### 16.2 적용된 설계 결정
+
+- ADR-002: 비동기 문서 처리 및 DB 상태 관리
+- ADR-003: Evidence Check 및 Citation 검증
+- 업로드 접수와 문서 처리 완료 구별
+- 근거 부족 시 ABSTAINED 반환
+- 시스템 오류는 적절한 HTTP 오류 응답으로 처리
+- 출처는 실제 검색된 DocumentChunk 기반으로 구성
+
+### 16.3 상세설계 대기
+
+- DTO 유효성 검사 구현
+- 최대 파일 크기 및 질문 길이
+- Polling 및 요청 Timeout 설정
+- 예외 처리 및 공통 ErrorResponse 구현
+- Spring Boot Controller / Service 구현
+- API 통합 테스트
+
+기본설계에서 정의한 P0 API 계약은 유지한다.
+
+본 문서는 최종 승인 전까지 DRAFT 상태를 유지한다.

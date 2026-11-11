@@ -445,34 +445,62 @@ LLM과 Embedding 모델의 동시 메모리 점유를 측정하고, 전체 시�
 | LLM 타임아웃 | FAILED |
 | 출처 검증 실패 | 미검증 답변 표시 금지 |
 
-## 11. 미결정 사항
+## 11. 상세설계 및 기술 검증 대기 사항
 
-1. 업로드 파일 크기 제한
-2. 비동기 작업 실행 방식
-3. 작업 재시도 및 복구 방식
-4. Chunk 크기 및 Overlap
-5. PDF 페이지 정보 보존 방식
-6. 임베딩 모델 및 벡터 차원
-7. 유사도 검색 알고리즘과 Top-K
-8. Evidence Check 판정 기준
-9. 컨텍스트 최대 길이
-10. 생성 모델의 실행 옵션
-11. Polling 간격
-12. 파일·DB 정합성 보장 방식
-13. 답변 출처 검증의 구체적 기준
+다음 항목은 기본 아키텍처 결정이 아닌 구현 세부 조건 또는 실제 실험이 필요한 사항이다.
+
+| ID | Item | Next Action |
+|---|---|---|
+| DF-001 | 업로드 파일 크기 | 초기 10MB 검증 |
+| DF-002 | Worker 실행 간격 | 상세설계에서 결정 |
+| DF-003 | 재시도 및 작업 소유권 | ADR-002 기준 상세설계 |
+| DF-004 | Chunk Size / Overlap | RAG 평가 후 결정 |
+| DF-005 | PDF 페이지 정보 | 추출 및 Chunking 테스트 |
+| DF-006 | Embedding 차원 | Qwen3 Embedding 0.6B 출력 확인 |
+| DF-007 | Retrieval Top-K | 초기 5개로 실험 |
+| DF-008 | Evidence Threshold | 평가 데이터로 결정 |
+| DF-009 | LLM Context Length | 메모리 및 품질 테스트 |
+| DF-010 | Generation Options | Qwen3 4B 실행 검증 |
+| DF-011 | REST Polling Interval | 초기 2초 실험 |
+| DF-012 | 파일·DB 보상 로직 | REV-006 정책에 따라 구현 |
+| DF-013 | Citation Verification | ADR-003 기준 테스트 |
+
+기존에 미결정이었던 주요 설계 방향은 다음 ADR을 통해 결정되었다.
+
+- ADR-001: 자체 pgvector SQL Adapter
+- ADR-002: PostgreSQL 상태 기반 비동기 Worker
+- ADR-003: 서버 측 Evidence Check 및 Citation Integrity Validation
+
+위 실험값은 검증 이후 변경될 수 있으며, 기본설계 승인만으로 기술 검증이 완료되었다고 취급하지 않는다.
 
 ## 12. 설계 검토 결과
 
-현재 상태: DRAFT
+Version: 0.1
 
-기존 확정 정책은 유지한다.
+Status: DRAFT — FINAL REVIEW
 
-추가 검토가 필요한 주요 제안:
+### 12.1 확정된 설계 방향
 
-- 비동기 문서 처리 및 DB 상태 기반 복구
+- 문서 업로드와 문서 분석의 비동기 처리 분리
+- PostgreSQL 기반 Document 상태 관리
+- 서버 재시작 후 미완료 작업 복구
+- Chunk 저장과 COMPLETED 상태 변경의 원자성
 - COMPLETED 문서만 검색 허용
-- 문서 재처리 시 중복 Chunk 방지
+- 자체 pgvector SQL 기반 검색
 - 서버 측 Evidence Check
-- 검증된 검색 결과 기반 출처 생성
+- 실제 검색된 Chunk 기반 Citation 검증
+- 근거 부족 시 ABSTAINED
+- 시스템 장애 시 오류 응답
 
-본 문서는 설계 리뷰 이후 v1.0 승인 대상으로 전환한다.
+### 12.2 기술 검증 대기
+
+- Qwen3 4B 실제 실행
+- Embedding 모델 출력 차원
+- Spring AI 및 Ollama 연동
+- Chunking 및 Vector Search 품질
+- 복구 및 멱등성 구현 테스트
+- M1 8GB 성능 측정
+
+본 문서는 ADR-001~003과 일치하도록 수정되었으며, 기본설계 최종 승인 검토 대상이다.
+
+실제 구현과 기술 검증은 아직 시작하지 않았다.
