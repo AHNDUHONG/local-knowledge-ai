@@ -33,7 +33,7 @@
 | REV-003 | Document / RAG Chunking 책임 중복 | Medium | RESOLVED |
 | REV-004 | Embedding 모델과 벡터 차원 | High | VALIDATION PENDING |
 | REV-005 | Citation 검증 수준 | High | DECIDED |
-| REV-006 | 파일 저장과 DB 트랜잭션 정합성 | High | OPEN |
+| REV-006 | 파일 저장과 DB 트랜잭션 정합성 | High | DESIGN RESOLVED |
 | REV-007 | API와 화면 상태 일치 | Low | 주요 흐름 일치 |
 | REV-008 | P0/P1 기능 범위 | Low | 주요 범위 일치 |
 | REV-009 | 모듈 간 순환 의존성 방지 | Medium | 상세 인터페이스 검토 |
@@ -170,6 +170,39 @@ M1 8GB 환경의 초기 실험 설정을 다음과 같이 제안한다.
 
 Status: EXPERIMENT PLANNED
 
+## 4.4 REV-006 — File and Database Consistency
+
+Status: DESIGN RESOLVED
+
+Resolution:
+
+원본 파일 시스템과 PostgreSQL은 서로 다른 자원이므로, 파일 저장과 DB 등록의 정합성 유지를 위해 보상 작업 및 복구 정책을 적용한다.
+
+설계 정책:
+
+1. 파일을 검증하고 저장한 후 Document 메타데이터를 등록한다.
+2. DB 등록 실패 시 저장된 파일을 삭제하도록 시도한다.
+3. 정리되지 않은 파일은 고아 파일 후보로 관리한다.
+4. DB 등록 후 Worker가 실행되지 않은 경우 UPLOADED 상태를 기준으로 재처리한다.
+5. 서버 재시작 시 Document 상태 및 원본 파일 존재 여부를 확인한다.
+6. Chunk 저장 및 COMPLETED 상태 변경은 동일한 DB 트랜잭션으로 처리한다.
+7. 파일 시스템과 DB 사이의 완전한 원자성을 보장한다고 가정하지 않는다.
+
+Related Decision: ADR-002
+
+Related Design: database-design.md, architecture.md
+
+Detailed Design Pending:
+
+- 안전한 저장 파일명 생성
+- 임시 파일과 최종 파일 이동 방식
+- 고아 파일 정리 시점
+- 오류 발생 시 보상 작업 구현
+- 서버 종료 시나리오 테스트
+- 작업 소유권 및 중복 처리 검증
+
+Implementation Verification: PENDING
+
 ## 5. 승인 조건
 
 - [ ] High 우선순위 설계 문제 해결
@@ -182,12 +215,29 @@ Status: EXPERIMENT PLANNED
 
 ## 6. 다음 작업
 
-1. REV-001 Vector DB 통합 방식 결정
-2. REV-002 비동기 처리 복구 정책 구체화
-3. REV-003 모듈 책임 수정
-4. 주요 ADR 작성
-5. 기존 설계서 수정 및 재리뷰
+### 6.1 설계 결정 완료
 
-현재 검토 결과: **수정 후 승인**
+- REV-001: ADR-001 ACCEPTED
+- REV-002: ADR-002 ACCEPTED
+- REV-003: 모듈 책임 구분 RESOLVED
+- REV-005: ADR-003 ACCEPTED
+- REV-006: 파일 및 DB 정합성 설계 정책 해결
 
-Phase 1 기본설계의 최종 승인은 아직 진행하지 않는다.
+### 6.2 기술 검증 및 상세설계 대기
+
+- REV-004: Qwen3 Embedding 출력 차원 및 메모리 검증
+- REV-007: API와 UI 계약 최종 확인
+- REV-008: P0 / P1 범위 최종 확인
+- REV-009: 모듈 공개 인터페이스 상세설계
+- REV-010: 최대 업로드 크기, 동시성, 타임아웃 실험
+
+### 6.3 최종 승인 전 작업
+
+1. 기본설계서 간 남은 충돌 확인
+2. 확정된 설계 정책과 실험값 구분
+3. PROJECT_STATUS.md 업데이트
+4. 기본설계 v1.0 승인 여부 결정
+
+Current Review Result: FINAL REVIEW PENDING
+
+기본설계의 전체 APPROVED 전환은 최종 검토가 완료된 이후 수행한다.
