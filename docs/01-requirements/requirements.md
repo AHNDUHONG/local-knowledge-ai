@@ -2,7 +2,9 @@
 
 - 문서 버전: v1.0
 - 작성일: 2026-10-19
-- 문서 상태: REVIEWED — APPROVAL PENDING
+- 문서 상태: APPROVED
+- 승인일: 2026-11-11
+- 승인 범위: P0 요구사항 및 P1/P2 범위 구분
 - 최종 검토일: 2026-11-11
 - 개발 단계: Phase 0 — 요구사항 정의(要件定義)
 
@@ -166,7 +168,9 @@ P1/P2 기능은 MVP 필수 구현 범위에 포함하지 않는다.
 
 Review Result: REVIEWED
 
-Approval Status: PENDING
+Approval Status: APPROVED
+
+Approval Scope: Requirements Baseline v1.0
 
 본 검토는 요구사항의 구성과 기본설계 반영 상태를 정리한 것이다.
 
