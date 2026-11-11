@@ -34,8 +34,8 @@
 | REV-004 | Embedding 모델과 벡터 차원 | High | VALIDATION PENDING |
 | REV-005 | Citation 검증 수준 | High | DECIDED |
 | REV-006 | 파일 저장과 DB 트랜잭션 정합성 | High | DESIGN RESOLVED |
-| REV-007 | API와 화면 상태 일치 | Low | 주요 흐름 일치 |
-| REV-008 | P0/P1 기능 범위 | Low | 주요 범위 일치 |
+| REV-007 | API와 화면 상태 일치 | Low | DESIGN RESOLVED |
+| REV-008 | P0/P1 기능 범위 | Low | DESIGN RESOLVED |
 | REV-009 | 모듈 간 순환 의존성 방지 | Medium | 상세 인터페이스 검토 |
 | REV-010 | 최대 파일 크기 및 응답 제한 | Medium | EXPERIMENT PLANNED |
 
@@ -202,6 +202,59 @@ Detailed Design Pending:
 - 작업 소유권 및 중복 처리 검증
 
 Implementation Verification: PENDING
+
+## 4.5 REV-007 — API / UI Alignment
+
+Status: DESIGN RESOLVED
+
+검토 결과:
+
+- 업로드 API: POST /api/v1/documents
+- 상태 조회 API: GET /api/v1/documents/{id}/status
+- 질문 API: POST /api/v1/qa
+- 업로드 접수 시 HTTP 202
+- 문서 처리 상태: UPLOADED / PROCESSING / COMPLETED / FAILED
+- 질문 결과: ANSWERED / ABSTAINED
+- 시스템 오류: HTTP 오류를 UI ERROR 상태로 표시
+- 출처: 실제 API 응답의 sources 배열 사용
+
+API와 UI의 기본 계약은 일치하도록 정리하였다.
+
+Implementation Verification: PENDING
+
+## 4.6 REV-008 — MVP Scope Alignment
+
+Status: DESIGN RESOLVED
+
+P0:
+
+- FR-001 ~ FR-009
+
+P1:
+
+- FR-010 ~ FR-012
+
+P2:
+
+- FR-013 ~ FR-014
+
+기본설계는 P0 기능을 기준으로 작성한다.
+
+P1/P2 기능을 MVP의 필수 구현으로 취급하지 않는다.
+
+## 4.7 Requirements Approval Gate
+
+Requirements Document: docs/01-requirements/requirements.md
+
+Requirements Review: REVIEWED
+
+Requirements Approval: PENDING
+
+Phase 1 Final Approval: PENDING
+
+기본설계서의 전체 APPROVED 전환은 요구사항 승인 상태를 확인하고 최종 리뷰 조건을 만족한 뒤 수행한다.
+
+상세 파라미터 및 기술 검증 항목은 Phase 2 실행계획으로 이관한다.
 
 ## 5. 승인 조건
 

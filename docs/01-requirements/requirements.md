@@ -2,7 +2,8 @@
 
 - 문서 버전: v1.0
 - 작성일: 2026-10-19
-- 문서 상태: 검토용 초안
+- 문서 상태: REVIEWED — APPROVAL PENDING
+- 최종 검토일: 2026-11-11
 - 개발 단계: Phase 0 — 요구사항 정의(要件定義)
 
 ## 1. 프로젝트 목적
@@ -105,23 +106,77 @@ Local Knowledge AI는 개인 컴퓨터에서 실행되는 문서 기반 AI 질�
 - [ ] M1 8GB 환경에서 실행 검증
 - [ ] 핵심 테스트 통과
 
-## 9. 미결정 사항
+## 9. 설계 결정 및 검증 대기 사항
 
-- AI 생성 모델 및 임베딩 모델
-- 업로드 파일 크기 제한
-- Chunk 크기와 Overlap
-- 임베딩 차원
-- DB 테이블 상세 설계
-- REST API 명세
-- 성능 및 평가 기준
-- 문서 삭제 및 보관 정책
+### 9.1 기본설계에서 결정한 사항
 
-## 10. 다음 단계
+- 답변 생성 모델: Qwen3 4B 우선 검증
+- Embedding 모델: Qwen3 Embedding 0.6B 우선 검증
+- 데이터베이스: PostgreSQL + pgvector
+- 벡터 저장 및 검색: Custom pgvector SQL Adapter
+- 비동기 문서 처리: PostgreSQL 상태 기반 Spring Boot Worker
+- 문서 상태 조회: REST Polling
+- RAG 근거 검증: Server-Side Evidence Check
+- 출처 검증: Citation Integrity Validation
 
-Phase 1 — 기본설계(基本設計)
+관련 문서:
 
-1. 시스템 아키텍처 설계
-2. 문서 처리 및 RAG 데이터 흐름 설계
-3. 화면 구성
-4. 데이터베이스 ERD 설계
-5. API 명세 설계
+- ADR-001
+- ADR-002
+- ADR-003
+- docs/02-basic-design/
+
+### 9.2 기술 검증 대기
+
+- Embedding 출력 차원
+- 실제 모델 실행 성능 및 메모리 사용량
+- 업로드 최대 크기
+- Chunk Size 및 Overlap
+- Top-K 및 Similarity Threshold
+- LLM Context Length 및 Timeout
+- 문서 처리 재시도와 복구 구현
+- RAG 검색 및 답변 품질
+- 성능과 신뢰성의 정량적 합격 기준
+
+위 항목은 기본설계 결정과 실제 기술 검증을 구분하여 관리한다.
+
+### 9.3 P1 / P2 확장 기능
+
+- FR-010 문서 목록 및 삭제: P1
+- FR-011 채팅 기록 영구 저장: P1
+- FR-012 SSE 스트리밍: P1
+- FR-013 Hybrid Search 및 Reranking: P2
+- FR-014 AI Harness 확장: P2
+
+P1/P2 기능은 MVP 필수 구현 범위에 포함하지 않는다.
+
+## 10. 요구사항 검토 및 다음 단계
+
+### 10.1 요구사항 검토 결과
+
+- P0: FR-001 ~ FR-009
+- P1: FR-010 ~ FR-012
+- P2: FR-013 ~ FR-014
+- 단일 사용자 로컬 실행 정책 유지
+- PDF/TXT 지원, OCR 제외
+- 외부 인터넷 검색 제외
+- 근거 부족 시 답변 보류
+- 실제 문서 출처 표시
+- 비기능 요구사항 NFR-001 ~ NFR-008 유지
+
+Review Result: REVIEWED
+
+Approval Status: PENDING
+
+본 검토는 요구사항의 구성과 기본설계 반영 상태를 정리한 것이다.
+
+공식 최종 승인은 별도로 기록한다.
+
+### 10.2 다음 단계
+
+1. 요구사항 승인 여부 확정
+2. 기본설계 최종 승인 판정
+3. PROJECT_STATUS.md 갱신
+4. Phase 2 개발환경 구축 및 상세설계 착수
+
+실제 구현 및 MVP 인수 테스트는 아직 완료하지 않았다.

@@ -290,14 +290,49 @@ LOADING
 
 ## 7. 화면과 API의 관계
 
-| UI Action | Backend Capability | API Definition |
-|---|---|---|
-| 파일 업로드 | Document Upload | 추후 정의 |
-| 처리 상태 조회 | Document Status | 추후 정의 |
-| 질문 전송 | RAG Question Answering | 추후 정의 |
-| 답변 출력 | Answer / Source Response | 추후 정의 |
+화면과 REST API의 연결은 `api-design.md`에 정의된 MVP P0 API 계약을 따른다.
 
-실제 HTTP Method, URL, Request DTO, Response DTO 및 오류 코드는 API 기본설계에서 정의한다.
+| UI Action | Method | Endpoint | Purpose |
+|---|---|---|---|
+| 파일 업로드 | POST | `/api/v1/documents` | PDF/TXT 업로드 접수 |
+| 처리 상태 조회 | GET | `/api/v1/documents/{id}/status` | 비동기 처리 상태 확인 |
+| 질문 전송 | POST | `/api/v1/qa` | RAG 질문 및 답변 |
+| 답변 출력 | - | API-003 응답 사용 | 답변 및 출처 표시 |
+
+### 7.1 파일 업로드
+
+`POST /api/v1/documents` 요청에 성공하면 HTTP 202 Accepted를 수신한다.
+
+프론트엔드는 응답의 Document ID를 이용하여 처리 상태를 조회한다.
+
+업로드 접수 성공과 문서 처리 완료는 구분한다.
+
+### 7.2 문서 처리 상태
+
+`GET /api/v1/documents/{id}/status`를 REST Polling 방식으로 호출한다.
+
+- UPLOADED: 처리 대기
+- PROCESSING: 문서 분석 중
+- COMPLETED: 처리 완료
+- FAILED: 처리 실패
+
+Polling 간격은 초기 2초를 실험값으로 사용한다.
+
+### 7.3 질문 및 답변
+
+`POST /api/v1/qa`를 호출한다.
+
+- ANSWERED: 답변 및 출처 표시
+- ABSTAINED: 근거 부족 안내
+- HTTP 오류: 프론트엔드 ERROR 상태로 변환
+
+출처는 API 응답의 `sources` 배열을 사용한다.
+
+프론트엔드는 임의의 출처 데이터를 생성하지 않는다.
+
+본 연결 정책은 ADR-002 및 ADR-003을 따른다.
+
+실제 HTTP 호출 및 오류 처리 코드는 Phase 2 이후 구현한다.
 
 ## 8. React 컴포넌트 구분 (Proposed)
 
