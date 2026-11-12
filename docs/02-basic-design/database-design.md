@@ -404,6 +404,16 @@ Embedding Model은 `qwen3-embedding:0.6b`를 우선 검증한다.
 
 해당 결정은 ADR-001을 기준으로 관리한다.
 
+### 12.3 개발·검증용 DB GUI 클라이언트
+
+- **도구:** DBeaver Community
+- **접속:** PostgreSQL 17 (localhost:5432 / `local_knowledge_ai` / 사용자 `ahndu`)
+- **상태:** 로컬 DB 연결 성공 (2026-11-12 사용자 확인)
+- **목적:** ERD 및 테이블 구조 조회, SQL 실행, 데이터·벡터 검색 결과 검증
+- **범위:** 개발 보조 도구이며 PostgreSQL/pgvector나 Spring Boot 아키텍처를 대체하지 않는다.
+- **스키마 변경 관리:** Flyway를 기준으로 하며 DBeaver에서 임의의 영구 DDL을 수행하지 않는다.
+- **변경 사항:** GUI 연결만 완료, 기존 DB 및 테이블·데이터 변경 없음.
+
 ## 13. Flyway Migration 정책
 
 Flyway로 DB 스키마 변경 이력을 관리하는 방향을 유지한다.
