@@ -5,11 +5,11 @@
 | 항목 | 내용 |
 |---|---|
 | Project | Local Knowledge AI |
-| Document Version | 1.1 |
-| Last Updated | 2026-11-11 |
-| Current Phase | Phase 1 — Basic Design Final Review |
-| Next Phase | Phase 2 — Development Environment Setup / Detailed Design Preparation |
-| Development Status | Basic Design Draft Complete / Implementation Not Started |
+| Document Version | 1.3 |
+| Last Updated | 2026-11-12 |
+| Current Phase | Phase 2 — Development Environment Setup / Integration Validation |
+| Next Phase | Phase 3 — MVP Implementation (after Phase 2) |
+| Development Status | Requirements / Basic Design v1.0 APPROVED; local environment verification in progress; application not implemented |
 | Repository | https://github.com/AHNDUHONG/local-knowledge-ai |
 | Local Path | `~/Project/local-knowledge-ai` |
 
@@ -62,24 +62,39 @@ Local Knowledge AI는 로컬 LLM과 RAG를 활용하여 사용자가 등록한 �
 
 | Layer | Technology | Status |
 |---|---|---|
-| Language | Java 21 LTS | 잠정 선정 |
+| Language | Java 21.0.9 LTS | 설치·검증 완료 |
 | Backend | Spring Boot 3.5.x | 잠정 선정 |
 | AI Integration | Spring AI 1.1.x | 잠정 선정 |
 | Frontend | React 19.x | 잠정 선정 |
 | Frontend Language | TypeScript | 잠정 선정 |
 | Build Tool (FE) | Vite | 잠정 선정 |
-| Build Tool (BE) | Maven | 잠정 선정 |
-| Database | PostgreSQL | 잠정 선정 |
-| Vector Search | pgvector | 잠정 선정 |
+| Build Tool (BE) | Maven 3.10.0 | 설치·검증 완료 |
+| Database | PostgreSQL 17 | 로컬 설치 및 연결 확인 |
+| Vector Search | pgvector | 설치 및 로컬 벡터 검색 테스트 완료 |
 | Database Migration | Flyway | 잠정 선정 |
-| LLM Runtime | Ollama | 채택 방향 확정 |
-| LLM Model | 미선정 | 검토 필요 |
-| Embedding Model | 미선정 | 검토 필요 |
+| LLM Runtime | Ollama | 로컬 설치 및 모델 실행 테스트 완료 |
+| LLM Model | Qwen3 4B (`qwen3:4b`) | 로컬 생성 테스트 완료, 성능 평가 대기 |
+| Embedding Model | Qwen3 Embedding 0.6B (`qwen3-embedding:0.6b`) | 로컬 생성·pgvector 통합 테스트 완료 보고, 출력 차원 수치 기록 대기 |
 | Backend Test | JUnit, Mockito | 검토 예정 |
 | Frontend Test | Vitest | 검토 예정 |
 | Version Control | Git + GitHub | 연결 완료 보고 |
 
-구체적인 라이브러리 패치 버전, 설치 여부, 호환성 및 실행 여부는 개발환경 구축 단계에서 확인한다.
+Spring Boot·Spring AI 등 애플리케이션 라이브러리의 정확한 호환 버전은 프로젝트 생성 시 공식 문서로 확인한다.
+
+### 2.4 로컬 DB 관리 도구 (2026-11-12 업데이트)
+
+| Item | Value |
+|---|---|
+| GUI Client | DBeaver Community |
+| Role | 개발 보조 도구 — DB 구조·데이터·SQL 결과·테이블 관계 확인 및 검증 |
+| DBMS | PostgreSQL 17 |
+| Extension | pgvector |
+| Connection | localhost:5432 |
+| Database | `local_knowledge_ai` |
+| Username | `ahndu` |
+| Connection Status | DBeaver에서 접속 성공 (사용자 확인) |
+
+DBeaver는 DBMS, 애플리케이션 프레임워크 또는 서버 아키텍처 구성요소가 아니다. 기존 PostgreSQL 데이터베이스와 pgvector 설정을 변경하지 않았고, DBeaver 연결 과정에서 테이블 생성·데이터 변경도 진행하지 않았다. DB 스키마는 향후 Flyway Migration에서 관리한다.
 
 ---
 
@@ -414,28 +429,29 @@ local-knowledge-ai/
 
 ## 10. 완료된 작업 (Completed)
 
-- [x] 프로젝트 목적 정의
-- [x] 개발 장비 및 환경 확인
-- [x] 기술 스택 잠정 선정
-- [x] 초기 사용자 정책 확정
-- [x] PDF/TXT 지원 범위 확정
-- [x] 문서 근거 전용 답변 정책 확정
-- [x] 로컬 실행 정책 확정
-- [x] 요구사항 정의서 v1.0 초안 작성
-- [x] 요구사항 정의서 PDF 작성
-- [x] 프로젝트 루트 폴더 생성
-- [x] 기본 Markdown 문서 파일 생성
-- [x] Git 저장소 초기화 확인
-- [x] main 브랜치 확인
-- [x] GitHub 인증 및 연동 완료 보고
+### Phase 0 — Requirements / Phase 1 — Basic Design
 
-### 아직 확인이 필요한 작업
+- [x] 요구사항 정의서 v1.0 승인 (2026-11-11)
+- [x] 기본설계서 6개 v1.0 승인
+- [x] ADR-001~003 ACCEPTED
+- [x] REV-003, 006, 007, 008 설계 수준 해결
+- [x] Git / GitHub main 기반 문서 관리
 
-- [ ] Markdown 문서의 최종 저장 내용 검토
-- [ ] GitHub 첫 Push 및 최신 커밋 확인
-- [ ] `.gitignore`에 불필요한 파일 제외 설정 확인
-- [ ] 요구사항 정의서 최종 승인
-- [ ] 기술 스택 세부 버전 확정
+### Phase 2 — Local Development Environment
+
+- [x] Apple Silicon M1 / macOS 15.5 환경 확인
+- [x] Java 21.0.9 / Maven 3.10.0 동작 확인
+- [x] Node.js 22.17.0 / npm 10.9.2 / Homebrew 7.0.9 확인
+- [x] PostgreSQL 17 / pgvector 설치 및 기본 벡터 검색 테스트
+- [x] `local_knowledge_ai` 로컬 DB 생성
+- [x] Ollama / Qwen3 4B / Qwen3 Embedding 0.6B 실행 테스트 완료 보고
+- [x] Ollama 생성 벡터를 PostgreSQL pgvector에 저장·검색하는 통합 테스트 완료 보고
+- [x] DBeaver Community 설치 및 `localhost:5432/local_knowledge_ai` 접속 성공 (사용자 확인)
+- [ ] 임베딩 실제 출력 차원 수치를 기록하고 DB VECTOR(D) 확정
+- [ ] Spring Boot / Spring AI 버전 및 Java 애플리케이션 연동 검증
+- [ ] Frontend React / TypeScript / Vite 프로젝트 생성 및 실행
+
+참고: Ollama + pgvector 통합 성공은 사용자 보고 기준이다. 벡터 출력 차원의 실제 숫자와 테스트 로그는 아직 본 문서에 첨부되지 않았다.
 
 ---
 
@@ -443,8 +459,6 @@ local-knowledge-ai/
 
 - Spring Boot 프로젝트 생성
 - React 프로젝트 생성
-- Ollama 설치 및 모델 실행 검증
-- PostgreSQL / pgvector 설치 및 연동
 - JPA Entity 및 Repository
 - Flyway Migration
 - 파일 업로드 API
@@ -457,7 +471,7 @@ local-knowledge-ai/
 - CI/CD
 - 배포
 
-현재는 기획과 GitHub 기반 작업 환경을 준비하는 단계다.
+현재는 Phase 2 환경 구축과 기술 통합 검증 단계다. Spring Boot / React 애플리케이션 코드는 아직 생성·검증하지 않았다.
 
 ---
 
@@ -508,67 +522,41 @@ Spring Boot, Spring AI 및 Java의 호환성 검증이 필요하다.
 
 ## 13. 다음 작업 (Next Tasks)
 
-### Phase 0 — Requirements
+### 완료된 Phase
 
-- 요구사항 문서 초안 작성 완료
-- GitHub 연결 완료
-- 요구사항 최종 승인 여부는 별도 확인 필요
+- Phase 0 — Requirements v1.0 APPROVED
+- Phase 1 — Basic Design v1.0 APPROVED
+- ADR-001~003 ACCEPTED
 
-### Phase 1 — Basic Design
+### Current Phase — Phase 2: Development Environment / Detailed Design
 
-기본설계서 6개 작성 완료:
+완료된 환경 검증: Java 21, Maven, Node.js, PostgreSQL 17, pgvector, Ollama, Qwen3 4B, Qwen3 Embedding 0.6B, DBeaver 연결.
 
-1. architecture.md
-2. data-flow.md
-3. screen-design.md
-4. database-design.md
-5. api-design.md
-6. package-design.md
+다음 순서:
 
-주요 아키텍처 결정:
+1. 실제 임베딩 출력 차원 기록 및 REV-004 실험 결과 갱신
+2. Spring Boot / Spring AI 호환 버전 확인
+3. `backend/` Spring Boot 프로젝트 생성 및 기동
+4. JDBC 기반 PostgreSQL 접속 및 pgvector SQL 검증
+5. Spring AI를 통한 Ollama 모델 호출 검증
+6. Flyway 및 상세 DB 구조 적용
+7. `frontend/` React / TypeScript / Vite 프로젝트 생성 및 API 연결
 
-- ADR-001: ACCEPTED
-- ADR-002: ACCEPTED
-- ADR-003: ACCEPTED
+### Remains Deferred
 
-설계 리뷰:
-
-- REV-001 / 002 / 005: DECIDED
-- REV-003: RESOLVED
-- REV-006: DESIGN RESOLVED
-- REV-004 / 007 / 008 / 009 / 010: 검증 또는 추가 확인 필요
-
-Current Status: FINAL CLEANUP REQUIRED
-
-### Immediate Next Tasks
-
-1. final-review.md의 승인 조건 확인
-2. 기본설계서의 오래된 설명 수정
-3. API / UI / DB 정합성 최종 확인
-4. 요구사항 승인 상태 확인
-5. 기본설계 v1.0 승인 여부 결정
-
-### Phase 2 — Development Environment and Detailed Design
-
-Phase 1 승인 이후 다음 작업을 수행한다.
-
-- Java 21 / Maven / Spring Boot 환경 검증
-- Spring AI 버전 호환성 검증
-- React / TypeScript / Vite 환경 구축
-- PostgreSQL / pgvector 환경 구축
-- Ollama 설치 및 모델 실행 검증
-- Qwen3 4B 및 Embedding 0.6B 테스트
-- DB 상세설계 및 Flyway Migration
-- Backend DTO / Entity / Service 상세설계
-- API 구현 계획 및 테스트 설계
+- REV-009 모듈 공개 인터페이스 상세설계
+- REV-010 파일 크기, 동시성, 타임아웃 등 성능 실험
+- Worker 장애 복구 / RAG 품질 및 Citation 테스트
 
 ### Phase 3 — MVP Implementation
 
-작은 기능 단위로 구현하고 매 단계 테스트한다.
+문서 업로드 → 비동기 처리 → Chunking/Embedding → 검색 → 근거 기반 QA 순서로 기능 구현한다.
 
 ### Phase 4 — Quality Improvement
 
-검색 품질, RAG 신뢰성, 성능 및 추가 기능을 개선한다.
+검색 품질과 안정성, 사용자 경험, 운영 편의 기능을 개선한다.
+
+---
 
 ## 14. ChatGPT 협업 규칙
 
@@ -589,34 +577,23 @@ Phase 1 승인 이후 다음 작업을 수행한다.
 
 ## 15. 다음 채팅 시작 위치
 
-**Current Phase:** Phase 1 — Basic Design Final Review
+**Current Phase:** Phase 2 — Development Environment / Integration Validation
 
-**Current Status:** FINAL CLEANUP REQUIRED
+**Requirements:** v1.0 APPROVED
 
-**Completed:**
+**Basic Design:** v1.0 APPROVED (6 documents)
 
-- 기본설계 문서 6개 초안 작성 및 GitHub 저장
-- ADR-001 ACCEPTED
-- ADR-002 ACCEPTED
-- ADR-003 ACCEPTED
-- REV-003 및 REV-006 설계 수준 해결
-- 주요 ADR의 기본설계 반영
+**ADR:** ADR-001, ADR-002, ADR-003 ACCEPTED
 
-**Next Main Task:** Phase 1 최종 문서 정리 및 승인 여부 결정
+**Verified / Reported Environment:**
 
-**Expected Output:**
+- macOS 15.5 / MacBook Pro M1 8GB
+- Java 21.0.9 / Maven 3.10.0 / Node.js 22.17.0 / npm 10.9.2
+- PostgreSQL 17 + pgvector, `local_knowledge_ai`
+- DBeaver Community GUI: localhost:5432, user ahndu, connection successful
+- Ollama: `qwen3:4b`, `qwen3-embedding:0.6b`
+- Ollama embedding → PostgreSQL pgvector 통합 테스트 완료 보고 (차원 숫자 미기록)
 
-- 오래된 설계 설명 수정
-- API / DB / UI 간 정합성 최종 확인
-- 미결정 항목과 기술 검증 대기 항목 분리
-- 요구사항 승인 상태 기록
-- 기본설계 승인 결과 및 버전 갱신
-- Phase 2 실행 계획
+**Next Main Task:** Embedding output dimensions 기록 → Spring Boot Backend 프로젝트 생성 및 PostgreSQL/Ollama 연동
 
-**Important:**
-
-Spring Boot, React, PostgreSQL, pgvector, Ollama의 실제 구현 및 통합 테스트는 아직 완료되지 않았다.
-
-Qwen3 4B와 Qwen3 Embedding 0.6B는 우선 검증 모델이며 실제 하드웨어 테스트 결과에 따라 조정할 수 있다.
-
-현재 기본설계 문서 전체를 APPROVED로 간주하지 않는다.
+**Important:** DBeaver는 DB GUI 관리 도구이며 시스템 아키텍처 구성요소가 아니다. 실제 Spring Boot/React 코드는 아직 구현되지 않았다.
