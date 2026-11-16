@@ -183,13 +183,12 @@ PostgreSQL 전용 Enum 사용 여부는 후속 검토 대상으로 한다.
 | document_id | UUID | NO | DOCUMENT 참조 (FK) |
 | chunk_index | INTEGER | NO | 문서 내 Chunk 순서 |
 | content | TEXT | NO | 분할된 문서 텍스트 |
-| embedding | VECTOR(D) | NO | Embedding 벡터 |
+| embedding | VECTOR(1024) | NO | Embedding 벡터 |
 | page_number | INTEGER | YES | PDF 원본 페이지 |
 | created_at | TIMESTAMPTZ | NO | 생성 시각 |
 
-D는 Embedding 모델의 출력 차원이다.
-
-실제 차원 수와 `VECTOR(D)` 선언은 모델 검증 후 확정한다.
+Qwen3 Embedding 0.6B의 실제 출력 차원을 검증한 결과,
+1024차원으로 확인되어 현재 모델 기준 벡터 차원을 확정하였다.
 
 텍스트의 정확한 시작·끝 위치 및 페이지 경계를 넘는 Chunk의 출처 관리 방식은 추가 검토한다.
 
@@ -209,17 +208,20 @@ D는 Embedding 모델의 출력 차원이다.
 
 ### 6.4 Embedding 정책
 
-Embedding 모델 후보:
+#### Embedding Dimension Verification — 2026-11-12
 
-`qwen3-embedding:0.6b`
+- Model: `qwen3-embedding:0.6b`
+- Runtime: Ollama
+- Verified Output Dimensions: `1024`
+- Embedding Generation: SUCCESS
+- Database Column: `VECTOR(1024)`
+- Verification Method: Ollama `/api/embed` API
 
-Embedding 모델을 최종 선정한 후 벡터 차원을 확정한다.
+현재 Embedding 모델의 실제 출력 차원을 확인하여 1024차원으로 확정한다.
 
-문서 Chunk와 질문은 호환 가능한 같은 임베딩 공간에서 생성한다.
+향후 Embedding 모델이나 차원 설정을 변경하는 경우 DB 스키마 호환성 및 기존 벡터 재생성 여부를 검토한다.
 
-모델을 변경하면 기존 벡터의 재생성이 필요할 수 있다.
-
-모델명과 버전 추적 방식은 추가 설계 대상으로 한다.
+Spring AI 연동, 메모리 사용량 및 검색 품질 검증은 별도로 진행한다.
 
 ## 7. 벡터 검색 설계
 
@@ -427,6 +429,37 @@ Flyway로 DB 스키마 변경 이력을 관리하는 방향을 유지한다.
 - 기본 인덱스 생성
 
 실제 파일명, DDL 및 실행 순서는 개발 환경 구축 이후 확정한다.
+
+### 13.1 Phase 2 Implementation Verification — 2026-11-16
+
+**Migration:** `V1__create_document_tables.sql`
+
+**Result:** SUCCESS
+
+**Implemented:**
+
+- `document` 테이블 생성
+- `document_chunk` 테이블 생성
+- `flyway_schema_history` 생성 및 V1 적용 확인
+- UUID Primary Key 및 Foreign Key 적용
+- `VECTOR(1024)` 컬럼 적용
+- 기본 CHECK / UNIQUE 제약조건 적용
+
+**Java Persistence Verification:**
+
+- Document Entity: Spring Data JPA
+- DocumentRepository: 저장 및 조회 테스트 성공
+- DocumentChunkJdbcRepository: JDBC 기반 벡터 저장 및 검색 성공
+- Vector Search: Cosine Distance
+- Search Filter: `status = 'COMPLETED'`
+- Test Data: Transaction Rollback 확인
+
+**Implementation Notes:**
+
+- Lombok을 JPA Entity 및 Repository Adapter의 생성자 관련 코드에 사용한다.
+- Spring AI PgVectorStore는 사용하지 않는다.
+- 벡터 인덱스 최적화는 추후 성능 검증 후 결정한다.
+- 실제 RAG 품질 및 비동기 처리 테스트는 아직 완료되지 않았다.
 
 ## 14. 미결정 사항
 

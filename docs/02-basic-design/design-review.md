@@ -31,7 +31,7 @@
 | REV-001 | Spring AI와 자체 Vector DB 구조의 통합 | High | DECIDED |
 | REV-002 | 비동기 문서 처리 및 서버 재시작 복구 | High | DECIDED |
 | REV-003 | Document / RAG Chunking 책임 중복 | Medium | RESOLVED |
-| REV-004 | Embedding 모델과 벡터 차원 | High | VALIDATION PENDING |
+| REV-004 | Embedding 모델과 벡터 차원 | High | PARTIALLY VERIFIED |
 | REV-005 | Citation 검증 수준 | High | DECIDED |
 | REV-006 | 파일 저장과 DB 트랜잭션 정합성 | High | DESIGN RESOLVED |
 | REV-007 | API와 화면 상태 일치 | Low | DESIGN RESOLVED |
@@ -128,7 +128,29 @@ Qwen3 Embedding 0.6B의 기본 출력은 최대 1024차원을 지원한다.
 - [ ] Spring Boot 및 DB 동시 실행 시 메모리 측정
 - [ ] LLM과 Embedding 모델의 메모리 점유 확인
 
-Status: VALIDATION PENDING
+Status: PARTIALLY VERIFIED
+
+### REV-004 — Phase 2 Verification Update
+
+Verification Date: 2026-11-12
+
+Status: PARTIALLY VERIFIED
+
+Completed:
+
+- [x] Ollama 실행 확인
+- [x] Qwen3 Embedding 0.6B 실행 확인
+- [x] Embedding 생성 성공
+- [x] 출력 벡터 차원 확인: 1024
+- [x] PostgreSQL pgvector 저장 및 검색 통합 테스트 완료 보고
+
+Remaining:
+
+- [ ] Spring AI와 Ollama Embedding 연동
+- [ ] M1 8GB 메모리 사용량 측정
+- [ ] 실제 RAG 검색 품질 평가
+
+Decision: 현재 Embedding 모델 기준 `VECTOR(1024)` 사용.
 
 ## 4.2 REV-005 — RAG Reliability Decision
 

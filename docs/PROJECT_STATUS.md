@@ -5,11 +5,11 @@
 | 항목 | 내용 |
 |---|---|
 | Project | Local Knowledge AI |
-| Document Version | 1.3 |
-| Last Updated | 2026-11-12 |
-| Current Phase | Phase 2 — Development Environment Setup / Integration Validation |
+| Document Version | 1.4 |
+| Last Updated | 2026-11-16 |
+| Current Phase | Phase 2 — Backend Integration |
 | Next Phase | Phase 3 — MVP Implementation (after Phase 2) |
-| Development Status | Requirements / Basic Design v1.0 APPROVED; local environment verification in progress; application not implemented |
+| Development Status | Spring Boot / PostgreSQL / Flyway / JPA / pgvector JDBC Integration Verified |
 | Repository | https://github.com/AHNDUHONG/local-knowledge-ai |
 | Local Path | `~/Project/local-knowledge-ai` |
 
@@ -62,41 +62,53 @@ Local Knowledge AI는 로컬 LLM과 RAG를 활용하여 사용자가 등록한 �
 
 | Layer | Technology | Status |
 |---|---|---|
-| Language | Java 21.0.9 LTS | 설치·검증 완료 |
-| Backend | Spring Boot 3.5.x | 잠정 선정 |
-| AI Integration | Spring AI 1.1.x | 잠정 선정 |
-| Frontend | React 19.x | 잠정 선정 |
-| Frontend Language | TypeScript | 잠정 선정 |
-| Build Tool (FE) | Vite | 잠정 선정 |
-| Build Tool (BE) | Maven 3.10.0 | 설치·검증 완료 |
-| Database | PostgreSQL 17 | 로컬 설치 및 연결 확인 |
-| Vector Search | pgvector | 설치 및 로컬 벡터 검색 테스트 완료 |
-| Database Migration | Flyway | 잠정 선정 |
-| LLM Runtime | Ollama | 로컬 설치 및 모델 실행 테스트 완료 |
-| LLM Model | Qwen3 4B (`qwen3:4b`) | 로컬 생성 테스트 완료, 성능 평가 대기 |
-| Embedding Model | Qwen3 Embedding 0.6B (`qwen3-embedding:0.6b`) | 로컬 생성·pgvector 통합 테스트 완료 보고, 출력 차원 수치 기록 대기 |
-| Backend Test | JUnit, Mockito | 검토 예정 |
-| Frontend Test | Vitest | 검토 예정 |
-| Version Control | Git + GitHub | 연결 완료 보고 |
+| Language | Java 21 LTS | 설치 및 실행 검증 완료 |
+| Backend | Spring Boot 4.1.2 | 프로젝트 생성, 빌드 및 서버 실행 완료 |
+| AI Integration | Spring AI | Spring Boot 4.1.2 호환 버전 확인 및 연동 대기 |
+| Frontend | React 19.x | 채택 예정, 미구현 |
+| Frontend Language | TypeScript | 채택 예정, 미구현 |
+| Build Tool (FE) | Vite | 채택 예정, 미구현 |
+| Build Tool (BE) | Maven 3.10.0 | 빌드 검증 완료 |
+| Database | PostgreSQL 17 | 설치 및 JDBC 연결 검증 완료 |
+| Vector Search | pgvector | `VECTOR(1024)` 저장 및 코사인 거리 검색 검증 완료 |
+| Database Migration | Flyway | V1 Migration 적용 완료 |
+| DB Management GUI | DBeaver Community | PostgreSQL 연결 완료 |
+| ORM / Persistence | Spring Data JPA | Document Entity 및 Repository 구현, 저장·조회 테스트 완료 |
+| Vector Persistence | Spring JDBC / JdbcTemplate | DocumentChunk JDBC Adapter 구현 및 통합 테스트 완료 |
+| Boilerplate Reduction | Lombok | 의존성 등록, Annotation Processor 및 코드 생성 검증 완료 |
+| LLM Runtime | Ollama | 설치 및 모델 실행 검증 완료 |
+| LLM Model | Qwen3 4B (`qwen3:4b`) | 로컬 답변 생성 테스트 완료 |
+| Embedding Model | Qwen3 Embedding 0.6B (`qwen3-embedding:0.6b`) | 임베딩 생성 및 1024차원 검증 완료 |
+| Backend Test | JUnit 5, AssertJ, Spring Boot Test | JPA / JDBC 통합 테스트 완료 |
+| Frontend Test | Vitest | 도입 검토 예정 |
+| Version Control | Git + GitHub | 연동 완료, 버전 관리 중 |
 
-Spring Boot·Spring AI 등 애플리케이션 라이브러리의 정확한 호환 버전은 프로젝트 생성 시 공식 문서로 확인한다.
+**기술 스택 확정 및 검증 기준**
 
-### 2.4 로컬 DB 관리 도구 (2026-11-12 업데이트)
+- Spring Boot는 기존 검토 버전인 3.5.x 대신 실제 프로젝트에 적용한 4.1.2를 사용한다.
+- Spring AI의 구체적인 버전은 Spring Boot 4.1.2와의 호환성을 검증한 뒤 확정한다.
+- Document 메타데이터는 Spring Data JPA로 관리한다.
+- DocumentChunk의 벡터 저장 및 검색은 ADR-001에 따라 자체 JDBC Adapter를 사용한다.
+- DB 스키마 변경은 Flyway로 관리하며, DBeaver는 조회 및 검증용 GUI로 사용한다.
+- Embedding 벡터 차원은 Ollama API 실행 결과에 따라 1024로 확정하였다.
+- 프론트엔드와 RAG 전체 파이프라인은 아직 구현하지 않았다.
+- 모든 기술의 설치 완료, 코드 구현 완료, 통합 테스트 완료는 각각 별개의 검증 상태로 구분한다.
+
+### 2.4 로컬 DB 관리 도구
 
 | Item | Value |
 |---|---|
 | GUI Client | DBeaver Community |
-| Role | 개발 보조 도구 — DB 구조·데이터·SQL 결과·테이블 관계 확인 및 검증 |
+| Role | 개발 보조 도구 — DB 구조 및 SQL 검증 |
 | DBMS | PostgreSQL 17 |
 | Extension | pgvector |
 | Connection | localhost:5432 |
 | Database | `local_knowledge_ai` |
 | Username | `ahndu` |
-| Connection Status | DBeaver에서 접속 성공 (사용자 확인) |
+| Connection Status | 접속 성공 |
 
-DBeaver는 DBMS, 애플리케이션 프레임워크 또는 서버 아키텍처 구성요소가 아니다. 기존 PostgreSQL 데이터베이스와 pgvector 설정을 변경하지 않았고, DBeaver 연결 과정에서 테이블 생성·데이터 변경도 진행하지 않았다. DB 스키마는 향후 Flyway Migration에서 관리한다.
-
----
+DBeaver는 개발 보조 GUI이며 DBMS나 서버 프레임워크가 아니다.
+스키마 변경은 Flyway로 관리한다.
 
 ## 3. 확정된 서비스 정책 (Confirmed Decisions)
 
@@ -429,49 +441,129 @@ local-knowledge-ai/
 
 ## 10. 완료된 작업 (Completed)
 
-### Phase 0 — Requirements / Phase 1 — Basic Design
+### 10.1 Phase 0 — Requirements
 
-- [x] 요구사항 정의서 v1.0 승인 (2026-11-11)
-- [x] 기본설계서 6개 v1.0 승인
-- [x] ADR-001~003 ACCEPTED
-- [x] REV-003, 006, 007, 008 설계 수준 해결
-- [x] Git / GitHub main 기반 문서 관리
+- [x] 프로젝트 목적 및 MVP 범위 정의
+- [x] 개발 환경 및 하드웨어 사양 확인
+- [x] 기술 스택 선정 및 기본 아키텍처 결정
+- [x] 단일 사용자 로컬 실행 정책 확정
+- [x] PDF/TXT 지원 범위 확정
+- [x] OCR 및 외부 인터넷 검색 제외
+- [x] 문서 근거 기반 답변 및 근거 부족 시 답변 보류 정책 확정
+- [x] 요구사항 정의서 v1.0 작성 및 승인 (2026-11-11)
+- [x] Git 저장소 초기화 및 GitHub 연동
 
-### Phase 2 — Local Development Environment
+### 10.2 Phase 1 — Basic Design
 
-- [x] Apple Silicon M1 / macOS 15.5 환경 확인
-- [x] Java 21.0.9 / Maven 3.10.0 동작 확인
-- [x] Node.js 22.17.0 / npm 10.9.2 / Homebrew 7.0.9 확인
-- [x] PostgreSQL 17 / pgvector 설치 및 기본 벡터 검색 테스트
-- [x] `local_knowledge_ai` 로컬 DB 생성
-- [x] Ollama / Qwen3 4B / Qwen3 Embedding 0.6B 실행 테스트 완료 보고
-- [x] Ollama 생성 벡터를 PostgreSQL pgvector에 저장·검색하는 통합 테스트 완료 보고
-- [x] DBeaver Community 설치 및 `localhost:5432/local_knowledge_ai` 접속 성공 (사용자 확인)
-- [ ] 임베딩 실제 출력 차원 수치를 기록하고 DB VECTOR(D) 확정
-- [ ] Spring Boot / Spring AI 버전 및 Java 애플리케이션 연동 검증
-- [ ] Frontend React / TypeScript / Vite 프로젝트 생성 및 실행
+- [x] 기본설계서 6개 작성 및 v1.0 승인
+- [x] Architecture 설계
+- [x] Data Flow 설계
+- [x] Screen Design 설계
+- [x] Database Design 설계
+- [x] API Design 설계
+- [x] Package Design 설계
+- [x] ADR-001: 자체 JDBC 기반 pgvector Adapter 채택
+- [x] ADR-002: PostgreSQL 기반 비동기 작업 처리 설계
+- [x] ADR-003: RAG 근거 및 Citation 검증 정책
+- [x] 기본설계 최종 리뷰 및 승인
 
-참고: Ollama + pgvector 통합 성공은 사용자 보고 기준이다. 벡터 출력 차원의 실제 숫자와 테스트 로그는 아직 본 문서에 첨부되지 않았다.
+### 10.3 Phase 2 — Development Environment
+
+- [x] MacBook Pro M1 / Java 21 개발환경 확인
+- [x] Maven 3.10.0 설치 및 빌드 검증
+- [x] Node.js 22.17.0 / npm 10.9.2 확인
+- [x] PostgreSQL 17 설치 및 서버 실행
+- [x] pgvector 설치 및 벡터 검색 테스트
+- [x] `local_knowledge_ai` 데이터베이스 생성
+- [x] DBeaver Community 설치 및 PostgreSQL 연결
+- [x] Ollama 설치 및 실행
+- [x] Qwen3 4B 답변 생성 테스트
+- [x] Qwen3 Embedding 0.6B 실행 및 1024차원 검증
+- [x] Ollama Embedding → PostgreSQL pgvector 저장·검색 통합 검증
+
+### 10.4 Phase 2 — Backend Implementation
+
+- [x] Spring Boot 4.1.2 프로젝트 생성
+- [x] Spring Boot Maven 빌드 성공
+- [x] Spring Boot 서버 실행 성공
+- [x] Lombok 의존성 및 Annotation Processor 적용
+- [x] Lombok Getter / Builder 코드 생성 검증
+- [x] Spring Boot ↔ PostgreSQL JDBC 연결 성공
+- [x] Flyway V1 Migration 성공
+- [x] `document` 테이블 생성
+- [x] `document_chunk` 테이블 생성
+- [x] `flyway_schema_history` 확인
+- [x] `VECTOR(1024)` 컬럼 생성 및 검증
+- [x] DocumentStatus Enum 구현
+- [x] Document JPA Entity 구현
+- [x] DocumentRepository 구현
+- [x] DocumentRepository 저장·조회 테스트
+- [x] ChunkSearchResult record 구현
+- [x] DocumentChunkJdbcRepository 구현
+- [x] JDBC 기반 1024차원 벡터 저장 테스트
+- [x] pgvector Cosine Distance 검색 테스트
+- [x] `COMPLETED` 상태 문서만 검색하는 필터 검증
+- [x] JPA / JDBC 테스트 컴파일 및 통합 테스트 성공
+- [x] 테스트 데이터 트랜잭션 롤백 확인
+
+### 10.5 추가 확인 및 관리 항목
+
+- [ ] Spring AI와 Spring Boot 4.1.2 호환 버전 확정
+- [ ] M1 8GB 환경의 AI 모델 메모리 및 성능 측정
+- [ ] `.gitignore` 및 GitHub 반영 파일 최종 확인
+- [ ] REV-009 모듈 상세 인터페이스 확정
+- [ ] REV-010 업로드 크기 및 타임아웃 검증
 
 ---
 
 ## 11. 아직 구현하지 않은 기능 (Not Implemented)
 
-- Spring Boot 프로젝트 생성
-- React 프로젝트 생성
-- JPA Entity 및 Repository
-- Flyway Migration
-- 파일 업로드 API
-- PDF/TXT 추출
-- Chunking 및 Embedding
-- RAG Retrieval
-- Ollama 답변 API
-- React 채팅 UI
-- 자동화 테스트
-- CI/CD
-- 배포
+### 11.1 AI Integration
 
-현재는 Phase 2 환경 구축과 기술 통합 검증 단계다. Spring Boot / React 애플리케이션 코드는 아직 생성·검증하지 않았다.
+- Spring AI ↔ Ollama Chat Model 연동
+- Spring AI ↔ Ollama Embedding Model 연동
+- Java에서 실제 임베딩 생성 및 JDBC Adapter 전달
+- 검색된 근거를 활용한 LLM 답변 생성
+- 근거 부족 시 답변 보류 처리
+- Citation 무결성 검증
+
+### 11.2 Document Processing
+
+- 문서 업로드 REST API
+- 원본 파일 저장 및 메타데이터 등록
+- PDF/TXT 텍스트 추출
+- 텍스트 Chunking
+- Ollama 기반 Embedding 생성
+- Chunk 및 Embedding 자동 저장
+- 비동기 Worker 및 상태 Polling
+- 작업 실패 및 서버 재시작 복구
+
+### 11.3 Backend API
+
+- `POST /api/v1/documents`
+- `GET /api/v1/documents/{id}/status`
+- `POST /api/v1/qa`
+- 요청 데이터 검증 및 공통 예외 처리
+- API 통합 테스트
+
+### 11.4 Frontend
+
+- React 19 / TypeScript / Vite 프로젝트 생성
+- 문서 업로드 UI
+- 문서 처리 상태 표시
+- 질문 및 답변 UI
+- 답변 출처 표시
+- Backend REST API 연결
+
+### 11.5 Quality and Operations
+
+- 전체 RAG 파이프라인 통합 테스트
+- 검색 정확도 및 답변 신뢰성 평가
+- M1 8GB 메모리 사용량 및 처리 속도 측정
+- 테스트 전용 DB 환경 분리
+- CI/CD 및 배포 환경 구축
+
+**현재 개발 상태:** Phase 2의 로컬 개발환경 구축과 DB 영속성 계층 구현 및 검증을 완료했다. 다음 작업은 Spring AI와 Ollama를 Java 백엔드에서 연동하는 것이다.
 
 ---
 
@@ -577,23 +669,60 @@ Spring Boot, Spring AI 및 Java의 호환성 검증이 필요하다.
 
 ## 15. 다음 채팅 시작 위치
 
-**Current Phase:** Phase 2 — Development Environment / Integration Validation
+**Current Phase:** Phase 2 — Backend Integration
 
 **Requirements:** v1.0 APPROVED
 
+
+**Backend:** Spring Boot 4.1.2 / Java 21 / Maven / Lombok
+
+**Database:** PostgreSQL 17 + pgvector
+
+**Database GUI:** DBeaver Community
+
+**Embedding:** Qwen3 Embedding 0.6B / 1024 dimensions verified
+
 **Basic Design:** v1.0 APPROVED (6 documents)
 
-**ADR:** ADR-001, ADR-002, ADR-003 ACCEPTED
+- Flyway V1 Migration
+- Document JPA Entity / Repository
+- DocumentRepository 저장·조회 테스트
+- DocumentChunk JDBC Adapter
+- VECTOR(1024) 저장 및 검색
+- COMPLETED 상태 검색 필터링
+- JPA / JDBC 통합 테스트
+
+**Architecture Decisions:**
+
+- ADR-001: Custom JDBC pgvector Adapter
+- ADR-002: PostgreSQL 기반 비동기 작업 처리
+- ADR-003: 근거 및 Citation 검증 정책
 
 **Verified / Reported Environment:**
 
 - macOS 15.5 / MacBook Pro M1 8GB
 - Java 21.0.9 / Maven 3.10.0 / Node.js 22.17.0 / npm 10.9.2
-- PostgreSQL 17 + pgvector, `local_knowledge_ai`
-- DBeaver Community GUI: localhost:5432, user ahndu, connection successful
+- PostgreSQL 17 + pgvector / `local_knowledge_ai`
+- DBeaver Community: localhost:5432 / 사용자 `ahndu`
 - Ollama: `qwen3:4b`, `qwen3-embedding:0.6b`
-- Ollama embedding → PostgreSQL pgvector 통합 테스트 완료 보고 (차원 숫자 미기록)
+- Embedding dimensions: 1024 verified
 
-**Next Main Task:** Embedding output dimensions 기록 → Spring Boot Backend 프로젝트 생성 및 PostgreSQL/Ollama 연동
+**Next Main Task:** Spring AI ↔ Ollama Integration
 
-**Important:** DBeaver는 DB GUI 관리 도구이며 시스템 아키텍처 구성요소가 아니다. 실제 Spring Boot/React 코드는 아직 구현되지 않았다.
+**Next Steps:**
+
+1. Spring Boot 4.1.2와 호환되는 Spring AI 버전 및 의존성 확정
+2. Ollama Chat Model 연결
+3. Ollama Embedding Model 연결
+4. Spring AI 생성 벡터를 JDBC Adapter에 전달하는 테스트
+5. 문서 업로드 및 비동기 처리 구현
+
+**Remaining Verification:**
+
+- M1 8GB 환경의 모델 메모리 사용량
+- REV-004 성능 및 호환성 검증
+- REV-009 모듈 상세 인터페이스
+- REV-010 리소스 제한 검증
+- RAG 검색 품질 및 Citation 검증
+
+기본설계 v1.0의 승인 상태는 유지한다. 구현 및 테스트 완료 범위는 실제 검증된 기능에 한정한다.
